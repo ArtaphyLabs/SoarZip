@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "soar-zip",
+  "productName": "Soar Zip",
   "version": "0.1.0",
   "identifier": "com.soar-zip.app",
   "build": {
@@ -13,9 +13,10 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "soar-zip",
-        "width": 800,
-        "height": 600
+        "title": "Soar Zip",
+        "width": 1000,
+        "height": 700,
+        "decorations": false
       }
     ],
     "security": {
@@ -28,6 +29,51 @@
     "icon": [
       "icons/icon.png",
       "icons/icon.ico"
+    ],
+    "resources": [
+      "binaries"
+    ],
+    "fileAssociations": [
+      {
+        "ext": ["zip"],
+        "name": "Zip Archive",
+        "mimeType": "application/zip",
+        "description": "Compressed Zip Archive"
+      },
+      {
+        "ext": ["7z"],
+        "name": "7z Archive",
+        "mimeType": "application/x-7z-compressed",
+        "description": "7z Archive"
+      },
+      {
+        "ext": ["rar"],
+        "name": "Rar Archive",
+        "mimeType": "application/x-rar-compressed",
+        "description": "Rar Archive"
+      },
+      {
+        "ext": ["tar"],
+        "name": "Tar Archive",
+        "mimeType": "application/x-tar",
+        "description": "Tar Archive"
+      }
     ]
+  },
+  "plugins": {
+    "shell": {
+      "open": true
+    },
+    "cli": {
+      "description": "Handles opening archive files passed as arguments.",
+      "args": [
+        {
+          "name": "filePath",
+          "index": 1,
+          "takesValue": true,
+          "description": "The path to the archive file to open."
+        }
+      ]
+    }
   }
 }

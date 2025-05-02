@@ -1,0 +1,234 @@
+/**
+ * Title Bar Stylesheet
+ * 标题栏样式表
+ * 
+ * Defines the appearance of the custom application title bar,
+ * including the logo, main menu, center area, and window control buttons.
+ * 定义自定义应用程序标题栏的外观，
+ * 包括 Logo、主菜单、中心区域和窗口控制按钮。
+ */
+
+/**
+ * Main titlebar container - Top bar of the application window
+ * 主标题栏容器 - 应用程序窗口的顶部栏
+ */
+#titlebar {
+  height: var(--titlebar-height);
+  background-color: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border-color);
+  -webkit-app-region: drag; /* Allows dragging the window - 允许拖动窗口 */
+}
+
+/**
+ * Left section of titlebar - Contains logo and main menu
+ * 标题栏左侧部分 - 包含徽标和主菜单
+ */
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: drag;
+}
+
+/**
+ * Logo container - Application logo and name
+ * 徽标容器 - 应用程序徽标和名称
+ */
+.logo {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  -webkit-app-region: drag;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--control-border-radius);
+  transition: background-color 0.2s ease;
+}
+
+/**
+ * Logo hover state - Visual feedback on hover
+ * 徽标悬停状态 - 悬停时的视觉反馈
+ */
+.logo:hover {
+  background-color: var(--hover-color);
+}
+
+/**
+ * Logo image - Specific styling for the logo image
+ * 徽标图片 - 徽标图片的特定样式
+ */
+.logo img {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+/**
+ * Logo text - Styling for the application name text next to the logo
+ * 徽标文本 - 徽标旁边应用程序名称文本的样式
+ */
+.logo span {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+/**
+ * Main menu container - Holds the main menu items
+ * 主菜单容器 - 容纳主菜单项
+ */
+.main-menu {
+  -webkit-app-region: drag; /* Allow dragging from menu area as well */
+}
+
+/**
+ * Main menu list - Unordered list containing menu items
+ * 主菜单列表 - 包含菜单项的无序列表
+ */
+.main-menu ul {
+  display: flex;
+  list-style: none;
+}
+
+/**
+ * Menu container - Relative positioning for potential dropdowns
+ * 菜单容器 - 用于潜在下拉菜单的相对定位
+ */
+.menu-container {
+  position: relative;
+  margin: 0 2px;
+}
+
+/**
+ * Menu item - Individual clickable menu button in the title bar
+ * 菜单项 - 标题栏中可单独点击的菜单按钮
+ */
+.menu-item {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: transparent;
+  border: none;
+  border-radius: var(--menu-item-radius);
+  cursor: pointer;
+  -webkit-app-region: no-drag; /* Individual items should be clickable */
+  height: calc(var(--titlebar-height) - 12px);
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+  transition: background-color 0.15s ease;
+}
+
+/**
+ * Menu item hover state - Visual feedback on hover
+ * 菜单项悬停状态 - 悬停时的视觉反馈
+ */
+.menu-item:hover {
+  background-color: var(--hover-color);
+}
+
+/**
+ * Menu item active state - Visual feedback when clicked
+ * 菜单项激活状态 - 点击时的视觉反馈
+ */
+.menu-item:active {
+  background-color: var(--active-color);
+}
+
+/**
+ * Title bar center section - Typically displays current file/archive name
+ * 标题栏中心部分 - 通常显示当前文件/压缩包名称
+ */
+.titlebar-center {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary-color);
+  -webkit-app-region: drag;
+  padding: 0 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/**
+ * Title bar right section - Contains window controls (minimize, maximize, close)
+ * 标题栏右侧部分 - 包含窗口控件（最小化、最大化、关闭）
+ */
+.titlebar-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 2px;
+}
+
+/**
+ * Window control button - Generic styling for minimize, maximize, restore buttons
+ * 窗口控制按钮 - 最小化、最大化、还原按钮的通用样式
+ */
+.window-control {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  -webkit-app-region: no-drag; /* Controls are not draggable */
+  cursor: pointer;
+  margin: 3px;
+  border-radius: var(--control-border-radius);
+  color: var(--text-color);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/**
+ * Window control hover state - Visual feedback on hover
+ * 窗口控件悬停状态 - 悬停时的视觉反馈
+ */
+.window-control:hover {
+  background-color: var(--window-control-hover);
+}
+
+/**
+ * Window control active state - Visual feedback when clicked
+ * 窗口控件激活状态 - 点击时的视觉反馈
+ */
+.window-control:active {
+  background-color: var(--window-control-active);
+}
+
+/**
+ * Close button specific styling - Adjustments for the close button
+ * 关闭按钮特定样式 - 关闭按钮的调整
+ */
+#close-btn {
+  margin-right: -3px;
+}
+
+/**
+ * Close button hover state - Specific red background on hover
+ * 关闭按钮悬停状态 - 悬停时特定的红色背景
+ */
+#close-btn:hover {
+  background-color: var(--close-btn-hover);
+  color: white;
+}
+
+/**
+ * Close button hover state (Dark theme) - Ensure text is white in dark mode hover
+ * 关闭按钮悬停状态（深色主题）- 确保在深色模式悬停时文本为白色
+ */
+:root.theme-dark #close-btn:hover {
+  color: white;
+}
+
+/**
+ * Settings button - Specific styling or adjustments for the settings button
+ * 设置按钮 - 设置按钮的特定样式或调整
+ */
+#settings-btn {
+  width: 36px;
+} 

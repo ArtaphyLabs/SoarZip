@@ -2,9 +2,9 @@ name: Build Tauri App
 
 on:
   push:
-    branches: [ '*' ]
+    branches: [ "*" ]
   pull_request:
-    branches: [ '*' ]
+    branches: [ "*" ]
 
 permissions:
   contents: read
@@ -61,6 +61,43 @@ jobs:
       with:
         workspaces: src-tauri -> target
 
+    # --- 开始：下载并放置 7-Zip --- 
+    - name: Create binaries directory
+      shell: bash
+      run: mkdir -p src-tauri/binaries/win src-tauri/binaries/macos src-tauri/binaries/linux
+
+    - name: Download and place 7-Zip (Windows)
+      if: matrix.platform == 'windows-latest'
+      shell: pwsh
+      run: |
+        $url = "https://www.7-zip.org/a/7z2409-x64.exe"
+        $output = "$env:RUNNER_TEMP\\7z-installer.exe"
+        Invoke-WebRequest -Uri $url -OutFile $output
+        Start-Process -Wait -FilePath $output -ArgumentList "/S /D=C:\\7z-temp"
+        Copy-Item "C:\\7z-temp\\7z.exe" -Destination "src-tauri\\binaries\\win\\7z.exe"
+        
+    - name: Download and place 7-Zip (Linux)
+      if: matrix.platform == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y p7zip-full
+        cp /usr/bin/7z src-tauri/binaries/linux/
+        
+    - name: Download and place 7-Zip (macOS)
+      if: matrix.platform == 'macos-latest'
+      run: |
+        brew install p7zip
+        # Homebrew 的安装路径可能不同 (Intel vs ARM)
+        if [ -f "/usr/local/bin/7z" ]; then
+          cp /usr/local/bin/7z src-tauri/binaries/macos/
+        elif [ -f "/opt/homebrew/bin/7z" ]; then
+          cp /opt/homebrew/bin/7z src-tauri/binaries/macos/
+        else
+          echo "Error: Could not find 7z executable after brew install."
+          exit 1
+        fi
+    # --- 结束：下载并放置 7-Zip ---
+
     # Linux (Ubuntu) 依赖安装
     - name: Install Linux dependencies
       if: matrix.platform == 'ubuntu-latest'
@@ -89,7 +126,6 @@ jobs:
       uses: tauri-apps/tauri-action@v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # 如果你的构建需要其他环境变量，请在此处添加
         # TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
         # TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 
