@@ -4,64 +4,45 @@
 use std::process::{Command, Output, Stdio};
 use std::path::{Path, PathBuf};
 use std::collections::HashSet;
-use tauri::{AppHandle, Manager}; // Add AppHandle and Manager for resource access
+use tauri::{AppHandle, Manager};
 
 #[cfg(target_os = "windows")]
 use std::os::windows::process::CommandExt;
 #[cfg(target_os = "windows")]
 use encoding_rs;
 
-use super::file_item::FileItem; // Import FileItem from the parent module
-use super::logging::{log_info, log_error}; // Import logging functions
+use super::file_item::FileItem;
 
 /// Determines the relative path to the bundled 7-Zip executable based on the target OS.
 /// Returns the path relative to the application's resource directory.
+/// 根据目标操作系统确定捆绑的 7-Zip 可执行文件的相对路径。
+/// 返回相对于应用程序资源目录的路径。
 ///
 /// # Returns
 ///
 /// * `Ok(String)` - The relative path to the 7-Zip executable.
+///                - 7-Zip 可执行文件的相对路径。
 /// * `Err(String)` - An error message if the OS is unsupported.
-///
-/// 根据目标操作系统确定捆绑的 7-Zip 可执行文件的相对路径。
-/// 返回相对于应用程序资源目录的路径。
-///
-/// # 返回值
-///
-/// * `Ok(String)` - 7-Zip 可执行文件的相对路径。
-/// * `Err(String)` - 如果操作系统不受支持，则返回错误消息。
+///                 - 如果操作系统不受支持，则返回错误消息。
 fn get_7z_resource_path() -> Result<String, String> {
     #[cfg(target_os = "windows")]
     { Ok("binaries/win/7z.exe".to_string()) }
-    #[cfg(target_os = "macos")]
-    { Ok("binaries/macos/7z".to_string()) }
-    #[cfg(target_os = "linux")]
-    { Ok("binaries/linux/7z".to_string()) }
-    // Catch-all for unsupported OS
-    #[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "linux")))]
-    { Err("Unsupported operating system for bundled 7-Zip.".to_string()) }
 }
 
 /// Resolves the full path to the bundled 7-Zip executable.
+/// 解析捆绑的 7-Zip 可执行文件的完整路径。
 ///
 /// # Arguments
 ///
 /// * `app_handle` - The Tauri application handle to access resource paths.
+///                - 用于访问资源路径的 Tauri 应用程序句柄。
 ///
 /// # Returns
 ///
 /// * `Ok(PathBuf)` - The absolute path to the 7-Zip executable.
+///                 - 7-Zip 可执行文件的绝对路径。
 /// * `Err(String)` - An error message if the path cannot be resolved or the executable doesn't exist.
-///
-/// 解析捆绑的 7-Zip 可执行文件的完整路径。
-///
-/// # 参数
-///
-/// * `app_handle` - 用于访问资源路径的 Tauri 应用程序句柄。
-///
-/// # 返回值
-///
-/// * `Ok(PathBuf)` - 7-Zip 可执行文件的绝对路径。
-/// * `Err(String)` - 如果无法解析路径或可执行文件不存在，则返回错误消息。
+///                 - 如果无法解析路径或可执行文件不存在，则返回错误消息。
 pub fn resolve_7z_path(app_handle: &AppHandle) -> Result<PathBuf, String> {
     let resource_path_str = get_7z_resource_path()?;
     let resource_dir = app_handle.path().resource_dir()
@@ -77,31 +58,24 @@ pub fn resolve_7z_path(app_handle: &AppHandle) -> Result<PathBuf, String> {
 
 /// Executes a 7-Zip command using the bundled executable.
 /// Handles platform-specific execution details (like CREATE_NO_WINDOW on Windows) and output decoding.
+/// 使用捆绑的可执行文件执行 7-Zip 命令。
+/// 处理特定平台的执行细节（如 Windows 上的 CREATE_NO_WINDOW）和输出解码。
 ///
 /// # Arguments
 ///
 /// * `seven_zip_path` - The path to the 7-Zip executable.
-/// * `args` - A slice of string arguments for the 7-Zip command.
+///                    - 7-Zip 可执行文件的路径。
+/// * `args`           - A slice of string arguments for the 7-Zip command.
+///                    - 7-Zip 命令的字符串参数切片。
 ///
 /// # Returns
 ///
 /// * `Ok(Output)` - The process output if the command execution was initiated successfully (even if 7z returned an error).
+///                - 如果命令成功启动，则返回进程输出（即使 7z 返回错误）。
 /// * `Err(String)` - An error message if the command failed to start.
-///
-/// 使用捆绑的可执行文件执行 7-Zip 命令。
-/// 处理特定平台的执行细节（如 Windows 上的 CREATE_NO_WINDOW）和输出解码。
-///
-/// # 参数
-///
-/// * `seven_zip_path` - 7-Zip 可执行文件的路径。
-/// * `args` - 7-Zip 命令的字符串参数切片。
-///
-/// # 返回值
-///
-/// * `Ok(Output)` - 如果命令成功启动，则返回进程输出（即使 7z 返回错误）。
-/// * `Err(String)` - 如果命令启动失败，则返回错误消息。
+///                 - 如果命令启动失败，则返回错误消息。
 pub fn run_7z_command(seven_zip_path: &Path, args: &[String]) -> Result<Output, String> {
-    log_info(&format!("Executing 7-Zip command: {:?} {:?}", seven_zip_path, args));
+    crate::log_info!("Executing 7-Zip command: {:?} {:?}", seven_zip_path, args);
 
     #[cfg(target_os = "windows")]
     let output_result = Command::new(seven_zip_path)
@@ -111,16 +85,9 @@ pub fn run_7z_command(seven_zip_path: &Path, args: &[String]) -> Result<Output, 
         .stderr(Stdio::piped())
         .output();
 
-    #[cfg(not(target_os = "windows"))]
-    let output_result = Command::new(seven_zip_path)
-        .args(args)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .output();
-
     output_result.map_err(|e| {
         let error_msg = format!("Failed to execute bundled 7-Zip command: {}", e);
-        log_error(&error_msg);
+        crate::log_error!("{}", error_msg);
         error_msg
     })
 }
@@ -128,77 +95,58 @@ pub fn run_7z_command(seven_zip_path: &Path, args: &[String]) -> Result<Output, 
 /// Decodes the output (stdout or stderr) of the 7-Zip process.
 /// Attempts to decode using GBK on Windows, falling back to UTF-8. Uses UTF-8 on other platforms.
 /// Logs an error if decoding issues occur on Windows.
-///
-/// # Arguments
-///
-/// * `output_bytes` - The raw byte slice from the process output.
-///
-/// # Returns
-///
-/// * `String` - The decoded string, possibly with replacement characters if decoding failed.
-///
 /// 解码 7-Zip 进程的输出（stdout 或 stderr）。
 /// 在 Windows 上尝试使用 GBK 解码，失败则回退到 UTF-8。在其他平台上使用 UTF-8。
 /// 如果在 Windows 上发生解码问题，则记录错误。
 ///
-/// # 参数
-///
-/// * `output_bytes` - 来自进程输出的原始字节切片。
-///
-/// # 返回值
-///
-/// * `String` - 解码后的字符串，如果解码失败，可能包含替换字符。
-pub fn decode_7z_output(output_bytes: &[u8]) -> String {
-    #[cfg(target_os = "windows")]
-    {
-        // On Windows, try GBK first as 7z console output often uses it, fallback to UTF-8
-        let (decoded_cow, encoding_used, had_errors) = encoding_rs::Encoding::for_label(b"GBK")
-            .unwrap_or(encoding_rs::UTF_8) // Fallback gracefully
-            .decode(output_bytes);
-
-        if had_errors {
-            log_error(&format!("Error encountered while decoding 7-Zip output (used encoding: {}). Output might be garbled.", encoding_used.name()));
-        }
-        decoded_cow.into_owned() // Convert Cow<str> to String
-    }
-    #[cfg(not(target_os = "windows"))]
-    {
-        // On macOS and Linux, assume UTF-8
-        String::from_utf8_lossy(output_bytes).into_owned() // Convert Cow<str> to String
-    }
-}
-
-
-/// Parses the detailed listing output (`l -slt`) from 7-Zip into a vector of FileItem structs.
-/// Also attempts to reconstruct the directory structure implicitly.
-///
 /// # Arguments
 ///
-/// * `output_str` - The decoded string output from the 7-Zip list command.
+/// * `output_bytes` - The raw byte slice from the process output.
+///                  - 来自进程输出的原始字节切片。
 ///
 /// # Returns
 ///
-/// * `Vec<FileItem>` - A vector of file items representing the archive contents.
-///
+/// * `String` - The decoded string, possibly with replacement characters if decoding failed.
+///              - 解码后的字符串，如果解码失败，可能包含替换字符。
+pub fn decode_7z_output(output_bytes: &[u8]) -> String {
+    #[cfg(target_os = "windows")]
+    {
+        let (decoded_cow, _encoding_used, had_errors) = encoding_rs::Encoding::for_label(b"GBK")
+            .unwrap_or(encoding_rs::UTF_8)
+            .decode(output_bytes);
+
+        if had_errors {
+            crate::log_error!("Error encountered while decoding 7-Zip output (used encoding: GBK/UTF-8). Output might be garbled.");
+        }
+        decoded_cow.into_owned()
+    }
+}
+
+/// Parses the detailed listing output (`l -slt`) from 7-Zip into a vector of FileItem structs.
+/// Also attempts to reconstruct the directory structure implicitly.
 /// 将 7-Zip 的详细列表输出（`l -slt`）解析为 `FileItem` 结构体的向量。
 /// 同时尝试隐式地重建目录结构。
 ///
-/// # 参数
+/// # Arguments
+/// * `output_str` - The decoded string output from the 7-Zip list command.
 ///
+/// # 参数
 /// * `output_str` - 从 7-Zip 列表命令解码的字符串输出。
+/// 
+/// # Returns
+/// * `Vec<FileItem>` - A vector of file items representing the archive contents.
 ///
 /// # 返回值
-///
 /// * `Vec<FileItem>` - 表示压缩包内容的文件项向量。
 pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
     let mut files = Vec::new();
     let mut processed_paths = HashSet::new(); // Track paths to avoid duplicates
 
-    log_info("Parsing 7-Zip list output.");
+    crate::log_info!("Parsing 7-Zip list output.");
     if output_str.len() < 200 { // Log preview for short outputs
-        log_info(&format!("7-Zip output preview: {}...", output_str.chars().take(100).collect::<String>()));
+        crate::log_info!("7-Zip output preview: {}...", output_str.chars().take(100).collect::<String>());
     } else {
-        log_info(&format!("7-Zip output length: {}", output_str.len()));
+        crate::log_info!("7-Zip output length: {}", output_str.len());
     }
 
     // State variables for parsing each item block
@@ -365,10 +313,10 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
         !name.starts_with("7-Zip") && // Filter headers
         !name.starts_with("Listing archive:") &&
         !name.starts_with("----------") &&
-        !name.starts_with("Path =") && // Should have been processed, but as a safeguard
-        !name.starts_with("Size =") &&
-        !name.starts_with("Folder =") &&
-        !name.starts_with("Modified =")
+        !name.starts_with("Path = ") && // Should have been processed, but as a safeguard
+        !name.starts_with("Size = ") &&
+        !name.starts_with("Folder = ") &&
+        !name.starts_with("Modified = ")
     });
 
 
@@ -380,12 +328,7 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
         }
     });
 
-    log_info(&format!("Successfully parsed {} file items.", files.len()));
-    // Optional: Log first few items for debugging
-    // for (i, file) in files.iter().enumerate().take(5) {
-    //     log_info(&format!("Item {}: Name='{}', IsDir={}, Size={}, Mod='{}', Type='{}'",
-    //         i, file.name, file.is_dir, file.size, file.modified_date, file.type_name));
-    // }
+    crate::log_info!("Successfully parsed {} file items.", files.len());
 
     files
 } 

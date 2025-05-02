@@ -10,7 +10,6 @@
 
 /**
  * Main toolbar container - Contains path bar and actions bar
- *
  * 主工具栏容器 - 包含路径栏和操作栏
  */
 .toolbar {
@@ -77,16 +76,28 @@
   background-color: var(--active-color);
 }
 
+/**
+ * Disabled navigation button - Styling for inactive navigation buttons
+ * 禁用导航按钮 - 非活动导航按钮的样式
+ */
 .nav-btn.disabled { /* Moved .disabled here for specificity */
   opacity: 0.5;
   cursor: not-allowed;
   color: var(--text-secondary-color);
 }
 
+/**
+ * Disabled navigation button hover state - Prevent hover effect on disabled buttons
+ * 禁用导航按钮悬停状态 - 防止禁用按钮上的悬停效果
+ */
 .nav-btn.disabled:hover {
   background-color: transparent;
 }
 
+/**
+ * Path container - Displays the breadcrumb path
+ * 路径容器 - 显示面包屑路径
+ */
 .path-container {
   flex: 1;
   margin: 0 16px;
@@ -98,10 +109,18 @@
   overflow: hidden; /* Prevent path overflow */
 }
 
+/**
+ * Path container (Dark theme) - Specific background for dark mode
+ * 路径容器（深色主题）- 深色模式下的特定背景
+ */
 :root.theme-dark .path-container {
   background-color: rgba(var(--text-color-rgb, 255, 255, 255), 0.05);
 }
 
+/**
+ * Navigation path display area - Holds the breadcrumb items
+ * 导航路径显示区域 - 容纳面包屑项
+ */
 .nav-path {
   display: flex;
   align-items: center;
@@ -111,12 +130,20 @@
   white-space: nowrap; /* Prevent wrapping */
 }
 
+/**
+ * Path separator - Visual separator between path segments (e.g., '>')
+ * 路径分隔符 - 路径段之间的视觉分隔符（例如 '>'）
+ */
 .path-separator {
   margin: 0 8px;
   color: var(--text-secondary-color);
   opacity: 0.7;
 }
 
+/**
+ * Path item - Individual clickable segment in the breadcrumb path
+ * 路径项 - 面包屑路径中可单独点击的段
+ */
 .path-item {
   cursor: pointer;
   display: flex;
@@ -126,6 +153,10 @@
   transition: color 0.2s ease;
 }
 
+/**
+ * Path archive item - Specific styling for the archive name in the path
+ * 路径压缩包项 - 路径中压缩包名称的特定样式
+ */
 .path-archive {
   display: flex;
   align-items: center;
@@ -133,11 +164,19 @@
   color: var(--primary-color);
 }
 
+/**
+ * Path item hover state - Visual feedback on hover
+ * 路径项悬停状态 - 悬停时的视觉反馈
+ */
 .path-item:hover {
   color: var(--primary-color);
   text-decoration: underline;
 }
 
+/**
+ * Search container - Holds the search input and button
+ * 搜索容器 - 容纳搜索输入框和按钮
+ */
 .search-container {
   display: flex;
   align-items: center;
@@ -149,10 +188,18 @@
   width: 200px;
 }
 
+/**
+ * Search container (Dark theme) - Specific background for dark mode
+ * 搜索容器（深色主题）- 深色模式下的特定背景
+ */
 :root.theme-dark .search-container {
   background-color: rgba(var(--text-color-rgb, 255, 255, 255), 0.05);
 }
 
+/**
+ * Search input field - Text input for searching within the archive
+ * 搜索输入字段 - 用于在压缩包内搜索的文本输入框
+ */
 .search-input {
   border: none;
   background: transparent;
@@ -164,11 +211,19 @@
   color: var(--text-color);
 }
 
+/**
+ * Search input placeholder text styling
+ * 搜索输入占位符文本样式
+ */
 .search-input::placeholder {
   color: var(--text-secondary-color);
   opacity: 0.8;
 }
 
+/**
+ * Search button - Button to initiate the search
+ * 搜索按钮 - 用于启动搜索的按钮
+ */
 .search-btn {
   background: transparent;
   border: none;
@@ -184,12 +239,19 @@
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
+/**
+ * Search button hover state - Visual feedback on hover
+ * 搜索按钮悬停状态 - 悬停时的视觉反馈
+ */
 .search-btn:hover {
   background-color: var(--hover-color);
   color: var(--text-color);
 }
 
-/* Actions Bar (Second row of toolbar) */
+/**
+ * Actions Bar - Second row of toolbar containing action buttons
+ * 操作栏 - 工具栏第二行，包含操作按钮
+ */
 .actions-bar {
   height: var(--actions-bar-height);
   display: flex;
@@ -199,6 +261,10 @@
   gap: 2px;
 }
 
+/**
+ * Tool button - Standard button for toolbar actions (Add, Extract, etc.)
+ * 工具按钮 - 工具栏操作的标准按钮（添加、提取等）
+ */
 .tool-btn {
   display: flex;
   flex-direction: column;
@@ -217,6 +283,10 @@
   transition: background-color 0.15s ease;
 }
 
+/**
+ * Tool button icon styling - Specific styling for icons within tool buttons
+ * 工具按钮图标样式 - 工具按钮内图标的特定样式
+ */
 .tool-btn svg {
   color: var(--primary-color);
 }
@@ -229,6 +299,10 @@
   background-color: var(--active-color);
 }
 
+/**
+ * Toolbar divider - Vertical line separating groups of toolbar buttons
+ * 工具栏分隔线 - 分隔工具栏按钮组的垂直线
+ */
 .toolbar-divider {
   width: 1px;
   height: 32px;
@@ -236,7 +310,10 @@
   margin: 0 4px;
 }
 
-/* Style to hide the toolbar */
+/**
+ * Toolbar hidden state - Used to completely hide the toolbar
+ * 工具栏隐藏状态 - 用于完全隐藏工具栏
+ */
 .toolbar-hidden {
   display: none !important; /* Use important to override potential inline styles */
 } 

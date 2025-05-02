@@ -17,7 +17,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { loadAllComponents } from "./setup/componentLoader";
 import { 
   setupApplicationEventListeners, 
-  loadArchive // Needed for initial load check
+  loadArchive
 } from "./setup/appSetup";
 import { updateToolbarButtonsState } from "./setup/toolbar"; 
 import { setupWindowControls } from "./setup/windowControls"; 
@@ -43,7 +43,6 @@ async function initializeApp() {
   // 1. Load HTML UI component structures
   loadAllComponents();
 
-  // --- Add Titlebar/Window Controls Setup Early ---
   // Initialize custom titlebar controls early
   setupWindowControls(); 
 

@@ -13,13 +13,13 @@
  * 通知容器 - 通知的固定位置容器
  */
 #notification-container {
-  position: fixed; /* Fixed position in viewport - 在视口中的固定位置 */
+  position: fixed;
   bottom: 16px;
   right: 16px;
-  z-index: 9999; /* Very high z-index to appear above all content - 非常高的z-index以显示在所有内容之上 */
+  z-index: 9999;
   max-width: 360px;
   width: 90%; 
-  pointer-events: none; /* Allow clicking through container - 允许点击穿透容器 */
+  pointer-events: none;
 }
 
 /**
@@ -27,9 +27,9 @@
  * 单个通知 - 通知消息框
  */
 .notification {
-  position: absolute; /* Absolute positioning for stacking - 用于堆叠的绝对定位 */
-  right: 0; /* Pinned to the right of the container - 固定在容器右侧 */
-  bottom: 0; /* Initial bottom will be set by JS - 初始底部将由JS设置 */
+  position: absolute;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: flex-start;
   padding: 10px 16px;
@@ -40,10 +40,10 @@
   color: var(--text-color);
   border: 1px solid var(--border-color);
   overflow: hidden; 
-  pointer-events: auto; /* Enable interaction with notification - 启用与通知的交互 */
+  pointer-events: auto;
   opacity: 0;
   transform: translateX(110%); 
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out, bottom 0.3s ease-out; /* Default transitions - 默认过渡 */
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out, bottom 0.3s ease-out;
 }
 /**
  * Notification progress bar - Visual countdown indicator
@@ -93,7 +93,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px; /* Fine-tune icon vertical alignment - 微调图标垂直对齐 */
+  margin-top: 2px;
 }
 
 /**

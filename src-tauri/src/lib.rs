@@ -1,3 +1,13 @@
+/**
+ * Main library crate for the SoarZip application.
+ * SoarZip 应用程序的主库 crate。
+ *
+ * This crate defines the core backend logic, including Tauri setup,
+ * command handlers, state management, and interaction with utilities.
+ * 此 crate 定义了核心后端逻辑，包括 Tauri 设置、命令处理程序、
+ * 状态管理以及与工具函数的交互。
+ */
+
 // Declare the modules we created
 pub mod file_item;
 pub mod logging;
@@ -11,16 +21,25 @@ use tauri::Manager;
 // Re-export the commands to make them accessible for the handler
 use commands::*;
 
-// State to hold the initial file path passed via CLI arguments
+/// Holds the initial file path passed via command-line arguments.
+/// 保存通过命令行参数传递的初始文件路径。
+///
+/// This state is managed by Tauri and allows the frontend to retrieve
+/// the path once upon startup.
+/// 此状态由 Tauri 管理，允许前端在启动时获取一次路径。
 struct CliFilePathState {
     path: Mutex<Option<String>>,
 }
 
 impl CliFilePathState {
+    /// Sets the initial file path.
+    /// 设置初始文件路径。
     fn set_path(&self, path: String) {
         *self.path.lock().unwrap() = Some(path);
     }
 
+    /// Takes (retrieves and removes) the initial file path.
+    /// 获取并移除初始文件路径。
     fn take_path(&self) -> Option<String> {
         self.path.lock().unwrap().take()
     }

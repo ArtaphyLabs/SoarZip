@@ -42,15 +42,15 @@
   width: 100%;
   height: 100%;
   background-color: var(--overlay-color);
-  backdrop-filter: blur(2px); /* Background blur effect - 背景模糊效果 */
+  backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
-  animation: fadeInOverlay 0.3s forwards; /* Fade in animation - 淡入动画 */
-  pointer-events: none; /* Prevent interaction with overlay - 防止与覆盖层交互 */
+  animation: fadeInOverlay 0.3s forwards;
+  pointer-events: none;
 }
 
 /**
@@ -65,12 +65,12 @@
   transform: translate(-50%, -50%);
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.2); /* Spinner track color - 旋转器轨道颜色 */
+  border: 3px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  border-top-color: var(--primary-color); /* Spinner active color - 旋转器活动颜色 */
-  animation: spin 0.8s linear infinite; /* Continuous rotation - 连续旋转 */
+  border-top-color: var(--primary-color);
+  animation: spin 0.8s linear infinite;
   z-index: 10000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow - 微妙的阴影 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /**
@@ -83,6 +83,10 @@
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
 }
 
+/**
+ * Spin animation - Defines the rotation animation for spinners
+ * 旋转动画 - 定义旋转器的旋转动画
+ */
 @keyframes spin {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -92,6 +96,10 @@
   }
 }
 
+/**
+ * Fade in overlay animation - Defines the fade-in animation for overlays
+ * 淡入覆盖层动画 - 定义覆盖层的淡入动画
+ */
 @keyframes fadeInOverlay {
   0% {
     opacity: 0;
@@ -102,17 +110,28 @@
 }
 
 /* Transition Effects */
+/**
+ * Fade out transition class - Applies a fade-out effect
+ * 淡出过渡类 - 应用淡出效果
+ */
 .fade-out {
   opacity: 0.5;
   transition: opacity 0.15s ease-in-out;
 }
 
+/**
+ * Fade in transition class - Applies a fade-in effect
+ * 淡入过渡类 - 应用淡入效果
+ */
 .fade-in {
   opacity: 1;
   transition: opacity 0.15s ease-in-out;
 }
 
-/* 自定义链接样式 */
+/**
+ * Text link styling - Base style for clickable text links
+ * 文本链接样式 - 可点击文本链接的基础样式
+ */
 .text-link {
   color: var(--primary-color);
   text-decoration: none;
@@ -120,6 +139,10 @@
   cursor: pointer;
 }
 
+/**
+ * Text link underline effect - Defines the animated underline
+ * 文本链接下划线效果 - 定义动画下划线
+ */
 .text-link:after {
   content: '';
   position: absolute;
@@ -133,12 +156,19 @@
   transition: transform 0.3s;
 }
 
+/**
+ * Text link underline hover effect - Animates the underline on hover
+ * 文本链接下划线悬停效果 - 悬停时为下划线添加动画
+ */
 .text-link:hover:after {
   transform: scaleX(1);
   transform-origin: bottom left;
 }
 
-/* 状态提示 */
+/**
+ * Badge styling - Base style for small status indicators
+ * 徽章样式 - 小型状态指示器的基础样式
+ */
 .badge {
   display: inline-block;
   padding: 2px 8px;
@@ -147,21 +177,37 @@
   font-weight: 500;
 }
 
+/**
+ * Primary badge - Blue colored badge
+ * 主要徽章 - 蓝色徽章
+ */
 .badge-primary {
   background-color: rgba(var(--primary-color-rgb), 0.2);
   color: var(--primary-color);
 }
 
+/**
+ * Success badge - Green colored badge
+ * 成功徽章 - 绿色徽章
+ */
 .badge-success {
   background-color: rgba(16, 185, 129, 0.2);
   color: #10b981;
 }
 
+/**
+ * Warning badge - Yellow/Orange colored badge
+ * 警告徽章 - 黄色/橙色徽章
+ */
 .badge-warning {
   background-color: rgba(234, 179, 8, 0.2);
   color: #eab308;
 }
 
+/**
+ * Danger/Error badge - Red colored badge
+ * 危险/错误徽章 - 红色徽章
+ */
 .badge-danger {
   background-color: rgba(239, 68, 68, 0.2);
   color: #ef4444;

@@ -20,7 +20,7 @@
   justify-content: space-between;
   padding: 0 8px;
   border-bottom: 1px solid var(--border-color);
-  -webkit-app-region: drag; /* Allows dragging the window - 允许拖动窗口 */
+  -webkit-app-region: drag;
 }
 
 /**

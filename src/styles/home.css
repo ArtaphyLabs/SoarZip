@@ -13,9 +13,9 @@
  * 针对主页部分容器本身
  */
 #home-section {
-  background-color: var(--bg-color); /* Ensure consistent background - 确保背景一致 */
-  flex: 1; /* Ensure it fills space if needed - 确保在需要时填充空间 */
-  display: flex; /* Ensure flex properties work for children - 确保弹性属性对其子元素有效 */
+  background-color: var(--bg-color);
+  flex: 1;
+  display: flex;
 }
 
 /**
@@ -25,11 +25,11 @@
 .home-container {
   flex: 1;
   padding: 24px;
-  overflow-y: auto; /* Enable vertical scrolling - 启用垂直滚动 */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  background-color: var(--bg-color); /* Ensure home has consistent background - 确保主页有一致的背景 */
+  background-color: var(--bg-color);
 }
 
 /**
@@ -90,7 +90,7 @@
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 16px;
-  color: var(--text-secondary-color); /* Use a secondary text color variable */
+  color: var(--text-secondary-color);
 }
 
 /**
@@ -129,7 +129,7 @@
 .home-action-btn:hover {
   background-color: rgba(0, 120, 212, 0.1);
   border-color: rgba(0, 120, 212, 0.2);
-  transform: translateY(-2px); /* Slight lift effect - 轻微提升效果 */
+  transform: translateY(-2px);
 }
 
 /**
@@ -175,7 +175,7 @@
  * 主页页脚 - 包含统计数据和附加信息
  */
 .home-footer {
-  margin-top: auto; /* Push to bottom of container - 推到容器底部 */
+  margin-top: auto;
   padding-top: 32px;
 }
 
@@ -252,7 +252,7 @@
 .stat-value {
   font-size: 20px;
   font-weight: 600;
-  color: #333; /* Consider using var(--text-color) - 考虑使用var(--text-color) */
+  color: #333;
 }
 
 /** 
@@ -261,23 +261,23 @@
  */
 [data-theme="dark"] {
   .home-action-btn span {
-    color: var(--text-color-dark, #f0f0f0); /* Lighter text for buttons in dark mode */
+    color: var(--text-color-dark, #f0f0f0);
   }
 
   .action-group h2 {
-    color: var(--text-secondary-color-dark, #cccccc); /* Slightly brighter title text in dark mode */
+    color: var(--text-secondary-color-dark, #cccccc);
   }
 
   .no-files-message {
-    color: var(--text-secondary-color-dark, #999999); /* Adjust empty state color for dark mode */
+    color: var(--text-secondary-color-dark, #999999);
   }
 
   .stat-title {
-    color: var(--text-secondary-color-dark, #aaaaaa); /* Adjust stat title color */
+    color: var(--text-secondary-color-dark, #aaaaaa);
   }
 
   .stat-value {
-    color: var(--text-color-dark, #eeeeee); /* Adjust stat value color */
+    color: var(--text-color-dark, #eeeeee);
   }
 }
 

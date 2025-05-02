@@ -10,20 +10,19 @@
 
 /**
  * Overlay backdrop - Darkens the background when settings panel is open
- *
  * 覆盖背景 - 设置面板打开时使背景变暗
  */
 .settings-overlay {
-  position: fixed; /* Cover entire viewport - 覆盖整个视口 */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--overlay-color); /* Semi-transparent background - 半透明背景 */
-  z-index: 9000; /* High z-index to appear above other content - 高z-index以显示在其他内容之上 */
-  opacity: 0; /* Start transparent for animation - 开始时透明，用于动画 */
-  transition: opacity 0.3s ease; /* Smooth fade transition - 平滑淡入淡出过渡 */
-  backdrop-filter: blur(3px); /* Blur background content - 模糊背景内容 */
+  background-color: var(--overlay-color);
+  z-index: 9000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(3px);
 }
 
 /**
@@ -31,7 +30,7 @@
  * 可见覆盖状态 - 显示设置面板时应用
  */
 .settings-overlay.open {
-  opacity: 1; /* Fully opaque when open - 打开时完全不透明 */
+  opacity: 1;
 }
 
 /**
@@ -39,23 +38,23 @@
  * 设置面板容器 - 包含设置控件的主面板
  */
 .settings-panel {
-  position: fixed; /* Fixed positioning in viewport - 在视口中固定定位 */
+  position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.95); /* Center and slightly smaller for animation - 居中并略小，用于动画 */
-  width: 780px; /* Fixed width for consistent layout - 固定宽度，布局一致 */
-  max-width: 92vw; /* Responsive limitation - 响应式限制 */
-  max-height: 85vh; /* Prevent panel from being too tall - 防止面板过高 */
-  background-color: var(--card-bg-color); /* Panel background - 面板背景 */
-  border-radius: 12px; /* Rounded corners - 圆角 */
-  box-shadow: var(--card-shadow); /* Subtle shadow for depth - 微妙的阴影，增加深度感 */
-  z-index: 9001; /* Higher than overlay - 比覆盖层更高 */
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 780px;
+  max-width: 92vw;
+  max-height: 85vh;
+  background-color: var(--card-bg-color);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  z-index: 9001;
   display: flex;
   flex-direction: column;
-  opacity: 0; /* Start invisible - 开始时不可见 */
-  transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth fade and scale animation - 平滑的淡入和缩放动画 */
-  overflow: hidden; /* Prevent content overflow - 防止内容溢出 */
-  border: 1px solid var(--border-color); /* Subtle border - 微妙的边框 */
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
 }
 
 /**
@@ -63,8 +62,8 @@
  * 可见面板状态 - 显示设置面板时应用
  */
 .settings-panel.open {
-  opacity: 1; /* Fully visible - 完全可见 */
-  transform: translate(-50%, -50%) scale(1); /* Full size - 完整尺寸 */
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 /**
@@ -73,12 +72,12 @@
  */
 .settings-header {
   display: flex;
-  justify-content: space-between; /* Title on left, close button on right - 标题在左，关闭按钮在右 */
+  justify-content: space-between;
   align-items: center;
   padding: 12px 18px;
-  border-bottom: 1px solid var(--border-color); /* Separator line - 分隔线 */
-  background-color: rgba(var(--bg-color-rgb), 0.6); /* Semi-transparent header - 半透明标题栏 */
-  backdrop-filter: blur(10px); /* Frosted glass effect - 磨砂玻璃效果 */
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(var(--bg-color-rgb), 0.6); 
+  backdrop-filter: blur(10px);
 }
 
 /**
@@ -86,11 +85,11 @@
  * 设置面板标题 - 设置面板的主标题
  */
 .settings-header h2 {
-  font-size: 16px; /* Medium size font - 中等大小字体 */
-  font-weight: 500; /* Semi-bold weight - 半粗体 */
+  font-size: 16px;
+  font-weight: 500;
   margin: 0;
-  color: var(--text-color); /* Standard text color - 标准文本颜色 */
-  letter-spacing: 0.3px; /* Slightly increased letter spacing - 稍微增加字间距 */
+  color: var(--text-color);
+  letter-spacing: 0.3px;
 }
 
 /**
@@ -100,15 +99,15 @@
 .settings-close-btn {
   background: transparent;
   border: none;
-  width: 28px; /* Square dimensions - 正方形尺寸 */
+  width: 28px;
   height: 28px;
-  border-radius: 50%; /* Circular shape - 圆形 */
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-color); /* Match text color - 匹配文本颜色 */
-  transition: background-color 0.2s ease, transform 0.2s ease; /* Smooth hover and rotation - 平滑悬停和旋转 */
+  color: var(--text-color);
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 /**
@@ -116,8 +115,8 @@
  * 关闭按钮悬停状态 - 悬停时的视觉反馈
  */
 .settings-close-btn:hover {
-  background-color: var(--hover-color); /* Background highlight - 背景高亮 */
-  transform: rotate(90deg); /* Rotate on hover - 悬停时旋转 */
+  background-color: var(--hover-color);
+  transform: rotate(90deg);
 }
 
 /**
@@ -125,9 +124,9 @@
  * 设置内容容器 - 设置的可滚动区域
  */
 .settings-content {
-  flex: 1; /* Expand to fill panel - 扩展以填充面板 */
-  overflow-y: auto; /* Enable vertical scrolling - 启用垂直滚动 */
-  color: var(--text-color); /* Standard text color - 标准文本颜色 */
+  flex: 1;
+  overflow-y: auto;
+  color: var(--text-color);
 }
 
 /**
@@ -135,21 +134,21 @@
  * 设置内容的滚动条样式
  */
 .settings-content::-webkit-scrollbar {
-  width: 8px; /* Scrollbar width - 滚动条宽度 */
+  width: 8px;
   height: 8px;
 }
 
 .settings-content::-webkit-scrollbar-track {
-  background: var(--scrollbar-track); /* Track color - 轨道颜色 */
+  background: var(--scrollbar-track);
 }
 
 .settings-content::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb); /* Thumb color - 滑块颜色 */
-  border-radius: 4px; /* Rounded corners - 圆角 */
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
 }
 
 .settings-content::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover); /* Hover state - 悬停状态 */
+  background: var(--scrollbar-thumb-hover);
 }
 
 /**
@@ -159,7 +158,7 @@
 .settings-container {
   display: flex;
   height: 100%;
-  min-height: 400px; /* Minimum height to ensure usability - 确保可用性的最小高度 */
+  min-height: 400px;
 }
 
 /**
@@ -167,11 +166,11 @@
  * 设置侧边栏 - 设置类别的导航菜单
  */
 .settings-sidebar {
-  width: 220px; /* Fixed width sidebar - 固定宽度侧边栏 */
-  background-color: var(--bg-lighter-color); /* Slightly lighter background - 稍微浅一些的背景 */
-  border-right: 1px solid var(--border-color); /* Border separator - 边框分隔符 */
+  width: 220px;
+  background-color: var(--bg-lighter-color);
+  border-right: 1px solid var(--border-color);
   padding: 12px 0;
-  flex-shrink: 0; /* Prevent sidebar from shrinking - 防止侧边栏收缩 */
+  flex-shrink: 0;
 }
 
 /**
@@ -183,11 +182,11 @@
   align-items: center;
   padding: 12px 18px;
   cursor: pointer;
-  transition: all 0.2s ease; /* Smooth state transitions - 平滑状态过渡 */
-  color: var(--text-secondary-color); /* Less prominent text - 不太突出的文本 */
+  transition: all 0.2s ease;
+  color: var(--text-secondary-color);
   position: relative;
   margin: 2px 6px;
-  border-radius: 8px; /* Rounded corners - 圆角 */
+  border-radius: 8px;
 }
 
 /**
@@ -195,8 +194,8 @@
  * 导航项悬停状态 - 悬停时的视觉反馈
  */
 .settings-nav-item:hover {
-  background-color: var(--hover-color); /* Background highlight - 背景高亮 */
-  color: var(--text-color); /* More prominent text - 更突出的文本 */
+  background-color: var(--hover-color);
+  color: var(--text-color);
 }
 
 /**
@@ -204,9 +203,9 @@
  * 活动导航项 - 当前选择的类别
  */
 .settings-nav-item.active {
-  background-color: var(--primary-transparent-color); /* Colored background - 有色背景 */
-  color: var(--primary-color); /* Accent text color - 强调文本颜色 */
-  font-weight: 500; /* Semi-bold weight - 半粗体 */
+  background-color: var(--primary-transparent-color);
+  color: var(--primary-color);
+  font-weight: 500;
 }
 
 /**
@@ -219,9 +218,9 @@
   left: -6px;
   top: 0;
   bottom: 0;
-  width: 3px; /* Vertical accent line - 垂直强调线 */
-  background-color: var(--primary-color); /* Accent color - 强调色 */
-  border-radius: 0 4px 4px 0; /* Rounded right side - 圆角右侧 */
+  width: 3px;
+  background-color: var(--primary-color);
+  border-radius: 0 4px 4px 0;
 }
 
 /**
@@ -240,9 +239,9 @@
  * 主内容区域 - 包含设置控件
  */
 .settings-main-content {
-  flex-grow: 1; /* Expand to fill available space - 扩展以填充可用空间 */
+  flex-grow: 1;
   padding: 24px 28px;
-  overflow-y: auto; /* Enable vertical scrolling - 启用垂直滚动 */
+  overflow-y: auto;
 }
 
 /**
@@ -272,7 +271,7 @@
  * 设置部分 - 相关设置的单个组
  */
 .settings-section {
-  display: none; /* Hidden by default - 默认隐藏 */
+  display: none;
 }
 
 /**
@@ -281,7 +280,7 @@
  */
 .settings-section.active {
   display: block;
-  animation: fade-in 0.3s ease; /* Fade in animation - 淡入动画 */
+  animation: fade-in 0.3s ease;
 }
 
 /**
@@ -301,8 +300,8 @@
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: var(--primary-color); /* Accent color for visibility - 为可见性使用强调色 */
-  border-left: 3px solid var(--primary-color); /* Left accent border - 左强调边框 */
+  color: var(--primary-color);
+  border-left: 3px solid var(--primary-color);
   padding-left: 12px;
 }
 
@@ -312,7 +311,7 @@
  */
 .settings-form-group {
   margin-bottom: 22px;
-  max-width: 480px; /* Limit width for readability - 限制宽度以提高可读性 */
+  max-width: 480px;
 }
 
 /**
@@ -323,7 +322,7 @@
   display: block;
   margin-bottom: 10px;
   font-size: 14px;
-  font-weight: 500; /* Semi-bold for readability - 半粗体以提高可读性 */
+  font-weight: 500;
   color: var(--text-color);
 }
 
@@ -340,13 +339,13 @@
   color: var(--text-color);
   font-size: 14px;
   outline: none;
-  appearance: none; /* Remove default browser styling - 移除默认浏览器样式 */
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); /* Custom dropdown arrow - 自定义下拉箭头 */
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle shadow - 微妙的阴影 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /**
@@ -354,7 +353,7 @@
  * 选择悬停状态 - 悬停时的视觉反馈
  */
 .settings-select:hover {
-  border-color: var(--border-hover-color); /* Darker border on hover - 悬停时边框更深 */
+  border-color: var(--border-hover-color);
 }
 
 /**
@@ -362,8 +361,8 @@
  * 选择聚焦状态 - 聚焦时的视觉反馈
  */
 .settings-select:focus {
-  border-color: var(--primary-color); /* Accent border when focused - 聚焦时的强调边框 */
-  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15); /* Focus ring - 聚焦环 */
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15);
 }
 
 /**
@@ -373,7 +372,7 @@
 .settings-description {
   margin-top: 10px;
   font-size: 13px;
-  color: var(--text-secondary-color); /* Less prominent text - 不太突出的文本 */
+  color: var(--text-secondary-color);
   line-height: 1.5;
 }
 
@@ -386,7 +385,7 @@
   font-style: italic;
   text-align: center;
   padding: 40px 0;
-  border: 1px dashed var(--border-color); /* Dashed border for visual indication - 虚线边框用于视觉指示 */
+  border: 1px dashed var(--border-color);
   border-radius: 10px;
   background-color: var(--bg-lighter-color);
 }
@@ -396,11 +395,11 @@
  * 主题模式变量 - 主题颜色的自定义属性
  */
 :root {
-  --primary-color-rgb: 0, 120, 212; /* RGB format for opacity variations - 用于不透明度变化的RGB格式 */
-  --primary-transparent-color: rgba(0, 120, 212, 0.1); /* Transparent accent color - 透明强调色 */
-  --input-bg-color: var(--bg-color); /* Input background matches theme - 输入背景匹配主题 */
-  --text-muted-color: #888; /* Muted text for less emphasis - 用于较少强调的柔和文本 */
-  --bg-color-rgb: 255, 255, 255; /* Base background in RGB - RGB格式的基础背景 */
+  --primary-color-rgb: 0, 120, 212;
+  --primary-transparent-color: rgba(0, 120, 212, 0.1);
+  --input-bg-color: var(--bg-color);
+  --text-muted-color: #888;
+  --bg-color-rgb: 255, 255, 255;
 }
 
 /**
@@ -408,10 +407,10 @@
  * 深色主题变量 - 为深色模式覆盖属性
  */
 :root.theme-dark {
-  --primary-color-rgb: 77, 169, 255; /* Brighter in dark mode - 在深色模式下更亮 */
+  --primary-color-rgb: 77, 169, 255;
   --primary-transparent-color: rgba(77, 169, 255, 0.1);
-  --input-bg-color: #2d2d2d; /* Darker input background - 更深的输入背景 */
-  --text-muted-color: #777; /* Slightly brighter muted text - 稍微亮一些的柔和文本 */
+  --input-bg-color: #2d2d2d;
+  --text-muted-color: #777;
   --bg-color-rgb: 32, 32, 32;
 }
 
@@ -422,7 +421,7 @@
 .theme-dark .settings-panel,
 :root.theme-dark .settings-panel {
   background-color: var(--card-bg-color);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); /* Stronger shadow in dark mode - 深色模式下更强的阴影 */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 }
 
 /**
@@ -431,7 +430,7 @@
  */
 .theme-dark .settings-sidebar,
 :root.theme-dark .settings-sidebar {
-  background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent dark background - 半透明深色背景 */
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 /**
@@ -440,7 +439,7 @@
  */
 .theme-light .settings-sidebar,
 :root.theme-light .settings-sidebar {
-  background-color: #f5f5f5; /* Light gray background - 浅灰色背景 */
+  background-color: #f5f5f5;
 }
 
 /**
@@ -466,7 +465,7 @@
   width: 120px;
   height: 120px;
   border-radius: 12px;
-  border: 2px solid transparent; /* Invisible border by default - 默认情况下透明边框 */
+  border: 2px solid transparent;
   padding: 16px;
   cursor: pointer;
   background-color: var(--card-bg-color);
@@ -487,7 +486,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(var(--primary-color-rgb), 0.05) 100%); /* Subtle gradient - 微妙的渐变 */
+  background: linear-gradient(135deg, transparent 0%, rgba(var(--primary-color-rgb), 0.05) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -497,8 +496,8 @@
  * 主题选项悬停状态 - 悬停时的视觉反馈
  */
 .theme-option:hover {
-  transform: translateY(-4px); /* Lift effect - 提升效果 */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover - 悬停时更强的阴影 */
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 /**
@@ -514,8 +513,8 @@
  * 选定的主题选项 - 突出显示活动主题
  */
 .theme-option.selected {
-  border-color: var(--primary-color); /* Accent border - 强调边框 */
-  background-color: rgba(var(--primary-color-rgb), 0.08); /* Light accent background - 浅强调背景 */
+  border-color: var(--primary-color);
+  background-color: rgba(var(--primary-color-rgb), 0.08);
 }
 
 /**
@@ -530,7 +529,7 @@
   width: 24px;
   height: 24px;
   background-color: var(--primary-color);
-  clip-path: polygon(0 0, 100% 0, 100% 100%); /* Triangle shape - 三角形 */
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
 
 /**
@@ -552,7 +551,7 @@
  * 主题图标悬停效果 - 悬停时的动画
  */
 .theme-option:hover .theme-icon {
-  transform: scale(1.1); /* Grow slightly - 稍微放大 */
+  transform: scale(1.1);
 }
 
 /**
@@ -572,7 +571,7 @@
  */
 .about-content {
   padding: 8px;
-  background-color: rgba(var(--primary-color-rgb), 0.05); /* Very light accent background - 非常浅的强调背景 */
+  background-color: rgba(var(--primary-color-rgb), 0.05);
   border-radius: 8px;
   line-height: 1.6;
 }

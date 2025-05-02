@@ -13,19 +13,19 @@
  * 下拉菜单 - 在触发时出现的浮动菜单
  */
 .dropdown-menu {
-  position: absolute; /* Positioned relative to parent - 相对于父元素定位 */
-  top: 100%; /* Positioned below the trigger - 定位在触发元素下方 */
+  position: absolute;
+  top: 100%;
   left: 0;
-  background-color: var(--dropdown-bg-color); /* Semi-transparent background - 半透明背景 */
-  border: 1px solid var(--border-color); /* Subtle border - 微妙的边框 */
-  border-radius: var(--control-border-radius); /* Rounded corners - 圆角 */
-  box-shadow: 0 4px 12px var(--shadow-color); /* Drop shadow for depth - 深度的阴影 */
-  min-width: 180px; /* Minimum width for content - 内容的最小宽度 */
-  display: none; /* Hidden by default - 默认隐藏 */
-  z-index: 1000; /* Appears above other content - 出现在其他内容之上 */
+  background-color: var(--dropdown-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--control-border-radius);
+  box-shadow: 0 4px 12px var(--shadow-color);
+  min-width: 180px;
+  display: none;
+  z-index: 1000;
   padding: 6px;
-  margin-top: 2px; /* Small offset from trigger - 与触发元素的小偏移 */
-  backdrop-filter: blur(10px); /* Frosted glass effect - 磨砂玻璃效果 */
+  margin-top: 2px;
+  backdrop-filter: blur(10px);
 }
 
 /**
@@ -34,7 +34,7 @@
  */
 .dropdown-menu.show {
   display: block;
-  animation: dropdown-fade 0.2s ease; /* Smooth fade-in animation - 平滑淡入动画 */
+  animation: dropdown-fade 0.2s ease;
 }
 
 /**
@@ -44,11 +44,11 @@
 @keyframes dropdown-fade {
   from {
     opacity: 0;
-    transform: translateY(-5px); /* Start slightly higher - 从稍高的位置开始 */
+    transform: translateY(-5px);
   }
   to {
     opacity: 1;
-    transform: translateY(0); /* End at final position - 结束于最终位置 */
+    transform: translateY(0);
   }
 }
 
@@ -61,14 +61,14 @@
   width: 100%;
   text-align: left;
   padding: 8px 16px;
-  font-size: 12px; /* Smaller text size - 较小的文本大小 */
+  font-size: 12px;
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--text-color); /* Standard text color - 标准文本颜色 */
-  border-radius: var(--control-border-radius); /* Rounded corners - 圆角 */
+  color: var(--text-color);
+  border-radius: var(--control-border-radius);
   margin: 2px 0;
-  transition: background-color 0.15s ease, color 0.15s ease; /* Smooth hover effect - 平滑悬停效果 */
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 /**
@@ -76,7 +76,7 @@
  * 下拉项悬停状态 - 悬停时的视觉反馈
  */
 .dropdown-item:hover {
-  background-color: var(--hover-color); /* Highlight background - 高亮背景 */
+  background-color: var(--hover-color);
 }
 
 /**
@@ -84,7 +84,7 @@
  * 下拉项激活状态 - 点击时的视觉反馈
  */
 .dropdown-item:active {
-  background-color: var(--active-color); /* Darker highlight - 更深的高亮 */
+  background-color: var(--active-color);
 }
 
 /**
@@ -93,7 +93,7 @@
  */
 .menu-divider {
   height: 1px;
-  background-color: var(--border-color); /* Subtle divider color - 微妙的分隔线颜色 */
+  background-color: var(--border-color);
   margin: 6px 0;
 }
 

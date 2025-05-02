@@ -1,0 +1,46 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Rust Comment Style Guide
+
+This rule defines the standard comment style for Rust code within the SoarZip project.
+
+1.  **Standard Documentation Comments:** Use standard Rust documentation comments (`///`) for documenting functions, structs, enums, traits, modules declared with `mod`, and other items.
+2.  **File/Module Level Comments:** Use inner documentation comments (`//!`) at the beginning of each Rust file (`.rs`) to provide a summary of the file's purpose. This applies to both library (`lib.rs`) and binary (`main.rs`) crates, as well as individual module files.
+3.  **Bilingual Comments:** Important documentation comments (file headers, function/struct definitions) should follow the bilingual (English and Chinese-Simplified) format specified in [comment-guidelines.mdc](mdc:comment-guidelines.mdc). Use `///` or `//!` accordingly.
+4.  **Inline Comments:** Use regular comments (`//` or `/* ... */`) for explaining specific lines or blocks of code where necessary. Prefer `//` for single lines.
+
+**Example File Header:**
+
+```rust
+//! Brief description of the file's purpose in English.
+//! 文件用途的中文简要描述。
+
+// ... rest of the code
+```
+
+**Example Function Documentation:**
+
+```rust
+/// Brief description of the function in English.
+/// 函数功能的中文简要描述。
+///
+/// More detailed explanation if needed.
+/// 如有需要，提供更详细的解释。
+///
+/// # Arguments
+///
+/// * `arg1` - Description of the first argument.
+///          - 第一个参数的描述。
+///
+/// # Returns
+///
+/// * Description of the return value.
+/// * 返回值的描述。
+fn my_function(arg1: &str) -> bool {
+    // ... function body
+}
+```
+

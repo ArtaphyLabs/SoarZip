@@ -9,11 +9,6 @@
  */
 
 /**
- * File Explorer Styles - Defines appearance of the file browser
- * 文件浏览器样式 - 定义文件浏览器组件的外观
- */
-
-/**
  * Main file explorer container - Flexible container for the file browser
  * 主文件浏览器容器 - 文件浏览器的灵活容器
  */
@@ -24,10 +19,10 @@
   overflow: hidden;
   background-color: var(--card-bg-color);
   transition: background-color 0.2s ease-in-out;
-  border: 1px solid var(--border-color); /* Subtle border - 微妙的边框 */
-  border-radius: 6px; /* Slightly rounded corners - 轻微圆角 */
-  width: 100%; /* Fill parent width */
-  height: 100%; /* Fill parent height (the placeholder) */
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
 }
 
 /**
@@ -35,11 +30,11 @@
  * 文件浏览器组件 - 包含文件列表和控件
  */
 #file-browser {
-  flex: 1; /* Ensure it takes remaining space */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Crucial: prevent this container from scrolling */
-  background-color: var(--card-bg-color); /* Ensure background consistency */
+  overflow: hidden;
+  background-color: var(--card-bg-color);
 }
 
 /**
@@ -47,11 +42,11 @@
  * 文件列表标题 - 文件列表的列标题
  */
 .file-list-header {
-  height: 36px; /* Slightly taller header - 稍高的标题栏 */
+  height: 36px;
   display: flex;
   align-items: center;
-  padding: 0 12px; /* Adjust padding - 调整内边距 */
-  background-color: var(--header-bg-color, var(--bg-color)); /* Allow overriding header bg - 允许覆盖标题背景 */
+  padding: 0 12px;
+  background-color: var(--header-bg-color, var(--bg-color));
   border-bottom: 1px solid var(--border-color);
   font-weight: 500;
   font-size: 12px;
@@ -70,40 +65,41 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: flex;
-  align-items: center; /* Vertically center content */
+  align-items: center;
 }
 
-/* Specific header column widths and alignments */
+/*
+ * Specific header column widths and alignments
+ * 特定标题列宽度和对齐方式
+ */
 .file-list-header .col-icon,
 .file-item .col-icon {
-  flex: 0 0 38px; /* Fixed width for icon column */
+  flex: 0 0 38px;
   padding-left: 0;
   padding-right: 0;
-  /* Ensure no extra padding interferes */
 }
 .file-list-header .col-name,
 .file-item .col-name {
-  flex: 1 1 40%; /* Allow growing and shrinking, base width 40% */
-  min-width: 100px; /* Prevent collapsing too much */
-  /* Keep default alignment (left) */
+  flex: 1 1 40%;
+  min-width: 100px;
 }
 .file-list-header .col-date,
 .file-item .col-date {
-  flex: 0 1 150px; /* Allow shrinking, base width 150px */
-  justify-content: flex-start; /* Align content to start */
+  flex: 0 1 150px;
+  justify-content: flex-start;
   text-align: left;
 }
 .file-list-header .col-type,
 .file-item .col-type {
-  flex: 0 1 120px; /* Allow shrinking, base width 120px */
-  justify-content: flex-start; /* Align content to start */
+  flex: 0 1 120px;
+  justify-content: flex-start;
   text-align: left;
 }
 .file-list-header .col-size,
 .file-item .col-size {
-  flex: 0 1 100px; /* Allow shrinking, base width 100px */
-  justify-content: flex-end; /* Right align content */
-  text-align: right; /* Ensure text itself is right-aligned */
+  flex: 0 1 100px;
+  justify-content: flex-end;
+  text-align: right;
 }
 
 /**
@@ -111,11 +107,11 @@
  * 文件列表主体 - 可滚动文件项的容器
  */
 .file-list-body {
-  flex: 1; /* Allow body to grow and take available space */
-  overflow-y: scroll; /* Enable vertical scrolling (always show scrollbar space) */
-  overflow-x: hidden; /* Disable horizontal scrolling */
+  flex: 1;
+  overflow-y: scroll;
+  overflow-x: hidden;
   transition: opacity 0.15s ease-in-out;
-  padding: 4px; /* Add some padding around the list */
+  padding: 4px;
 }
 
 /**
@@ -123,12 +119,12 @@
  * 滚动条样式 - 滚动条的自定义外观
  */
 .file-list-body::-webkit-scrollbar {
-  width: 6px; /* Slightly thinner scrollbar - 稍微纤细的滚动条 */
+  width: 6px;
   height: 6px;
 }
 
 .file-list-body::-webkit-scrollbar-track {
-  background: transparent; /* Make track invisible - 使轨道不可见 */
+  background: transparent;
 }
 
 .file-list-body::-webkit-scrollbar-thumb {
@@ -147,13 +143,13 @@
 .file-item {
   display: flex;
   align-items: center;
-  height: 34px; /* Adjust height - 调整高度 */
-  padding: 0 12px; /* Adjust padding - 调整内边距 */
-  border: 1px solid transparent; /* Use transparent border for spacing - 使用透明边框进行间距 */
-  border-radius: 4px; /* Rounded corners for items - 项目的圆角 */
-  margin-bottom: 2px; /* Add space between items - 在项目之间添加空间 */
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 2px;
   font-size: 13px;
-  transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out; /* Smoother transitions - 更平滑的过渡 */
+  transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
   color: var(--text-color);
   cursor: pointer;
 }
@@ -163,7 +159,7 @@
  * 文件项悬停状态 - 悬停时的视觉反馈
  */
 .file-item:hover {
-  background-color: var(--hover-color-subtle, rgba(0, 0, 0, 0.04)); /* Subtle hover - 微妙的悬停 */
+  background-color: var(--hover-color-subtle, rgba(0, 0, 0, 0.04));
   border-color: var(--border-color-light, rgba(0, 0, 0, 0.08));
 }
 
@@ -172,9 +168,9 @@
  * 已选项样式 - Windows 11 风格的选择
  */
 .file-item.selected {
-  background-color: var(--selection-bg-color, rgba(0, 120, 215, 0.1)); /* Light blue background - 浅蓝色背景 */
-  border-color: var(--selection-border-color, rgba(0, 120, 215, 0.3)); /* Subtle blue border - 微妙的蓝色边框 */
-  color: var(--text-color); /* Keep default text color - 保持默认文本颜色 */
+  background-color: var(--selection-bg-color, rgba(0, 120, 215, 0.1));
+  border-color: var(--selection-border-color, rgba(0, 120, 215, 0.3));
+  color: var(--text-color);
 }
 
 /**
@@ -191,13 +187,12 @@
  * 文件列 - 文件项中的单个数据列
  */
 .file-column {
-  /* Remove generic flex: 1 */
   padding: 0 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: flex; /* Use flex for alignment within columns */
-  align-items: center; /* Vertically center content */
+  display: flex;
+  align-items: center;
 }
 
 /**
@@ -205,9 +200,9 @@
  * 文件图标 - 文件类型的视觉指示（样式移至 col-icon）
  */
 .col-icon svg {
-  width: 18px; /* Slightly larger icon - 稍大的图标 */
+  width: 18px;
   height: 18px;
-  color: var(--icon-color, var(--text-secondary-color)); /* Default icon color - 默认图标颜色 */
+  color: var(--icon-color, var(--text-secondary-color));
   flex-shrink: 0;
 }
 
@@ -216,7 +211,7 @@
  * 已选项图标 - 已选项图标的特殊样式
  */
 .file-item.selected .col-icon svg {
-  color: var(--icon-selected-color, var(--primary-color)); /* Icon color when selected - 选中时的图标颜色 */
+  color: var(--icon-selected-color, var(--primary-color));
 }
 
 /**
@@ -252,8 +247,6 @@
  */
 .file-list-body.disabled-interaction {
     opacity: 0.7;
-    /* Optional: add a semi-transparent overlay */
-    /* position: relative; */
 }
 
 /**
@@ -263,8 +256,8 @@
 #file-explorer-container {
     display: flex;
     flex-direction: column;
-    height: 100%; /* Take full height of its parent - 占据父元素的全部高度 */
-    overflow: hidden; /* Prevent scrollbars on the container itself - 防止容器本身出现滚动条 */
+    height: 100%;
+    overflow: hidden;
 }
 
 /**
@@ -288,8 +281,8 @@
  * 已选行样式 - 已选文件的视觉指示
  */
 #file-list-body tr.selected {
-    background-color: var(--list-active-selection-background); /* Use a distinct selection color - 使用明显的选择颜色 */
-    color: var(--list-active-selection-foreground); /* Ensure text is readable on selection - 确保文本在选择上可读 */
+    background-color: var(--list-active-selection-background);
+    color: var(--list-active-selection-foreground);
 }
 
 /**
@@ -306,5 +299,5 @@
  * 已选行悬停状态 - 已选行的特殊悬停效果
  */
 #file-list-body tr.selected:hover {
-    background-color: var(--list-active-selection-background-hover); /* A slightly different shade for hover on selected - 对已选择的悬停使用稍微不同的阴影 */
+    background-color: var(--list-active-selection-background-hover);
 }
