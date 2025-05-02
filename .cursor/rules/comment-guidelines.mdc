@@ -1,0 +1,118 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# SoarZip Comment Guidelines
+
+## General Comment Rules
+
+- Code should be self-documenting when possible
+- Comments should explain "why", not "what" the code does
+- Keep comments up to date when modifying code
+- Use proper grammar and punctuation
+- Avoid commented-out code; use version control instead
+
+## Documentation Comments
+
+Documentation comments (or important comments) must be bilingual (English and Chinese-Simplified):
+
+```typescript
+/**
+ * Extracts files from an archive to the specified destination
+ * 从压缩包中提取文件到指定目标位置
+ *
+ * This method handles various archive formats and preserves file attributes
+ * when extracting. It reports progress during the extraction process.
+ * 此方法处理各种压缩格式并在提取时保留文件属性。它在提取过程中报告进度。
+ *  
+ * @param archivePath - Path to the archive file
+ *                    - 压缩文件路径
+ * @param destination - Target directory for extracted files
+ *                    - 解压目标目录
+ * @param options - Extraction options like overwrite behavior
+ *                - 解压选项，如覆盖行为
+ * @returns Promise that resolves with extraction results
+ *          返回解压结果的Promise
+ */
+```
+
+## File Header Comments
+
+Every file must begin with a documentation comment describing its purpose:
+
+```typescript
+/**
+ * Archive extraction service
+ * 压缩包提取服务
+ * 
+ * This service handles extracting files from archives of various formats
+ * 此服务处理从各种格式的压缩包中提取文件
+ */
+```
+
+## Regular Comments
+
+For single-line comments or less important comments, only English is required:
+
+```typescript
+// Check if the file exists before attempting extraction
+const fileExists = await fs.exists(filePath);
+
+/* 
+ * This algorithm uses a streaming approach to handle large files
+ * without loading the entire file into memory
+ */
+```
+
+## TODO Comments
+
+Use TODO comments with issue references when applicable:
+
+```typescript
+// TODO(#123): Implement support for password-protected RAR files
+```
+
+## Function/Method Comments
+
+For non-trivial functions or methods, include a documentation comment explaining purpose, parameters, and return values:
+
+```typescript
+/**
+ * Compresses files into a new archive with specified options
+ * 将文件压缩到具有指定选项的新压缩包中
+ *
+ * @param files - Array of file paths to compress
+ *              - 要压缩的文件路径数组
+ * @param outputPath - Destination path for the new archive
+ *                   - 新压缩包的目标路径
+ * @param options - Compression options (format, level, etc.)
+ *                - 压缩选项（格式，级别等）
+ */
+```
+
+## Interface/Type Documentation
+
+Document interfaces and types thoroughly:
+
+```typescript
+/**
+ * Configuration options for archive compression
+ * 压缩包压缩的配置选项
+ */
+interface CompressionOptions {
+  /**
+   * Archive format (zip, 7z, rar, etc.)
+   * 压缩格式（zip, 7z, rar等）
+   */
+  format: ArchiveFormat;
+  
+  /**
+   * Compression level (0-9, where 0 is none and 9 is maximum)
+   * 压缩级别（0-9，其中0表示无压缩，9表示最大压缩）
+   */
+  level: number;
+}
+```
+
+

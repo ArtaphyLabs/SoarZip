@@ -1,0 +1,91 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# SoarZip Architecture Principles
+
+## Overall Architecture
+
+SoarZip adopts a hybrid architecture leveraging both Tauri 2.0 (Stable) with Rust for backend operations and Vanilla JavaScript/TypeScript for the frontend interface:
+
+1. **Backend (Rust/Tauri 2.0)**
+   - Handles file system operations
+   - Manages archive compression/decompression
+   - Provides performance-critical functionality
+   - Exposes capabilities to the frontend via Tauri commands
+
+2. **Frontend (Vanilla JavaScript/TypeScript)**
+   - Provides user interface via HTML and CSS
+   - Handles user interactions
+   - Manages application state
+   - Calls backend capabilities via Tauri API
+
+## Core Design Principles
+
+### 1. Separation of Concerns
+
+- Clear separation between UI, business logic, and data access
+- Frontend components should focus on presentation, not business logic
+- Backend services should encapsulate core functionality
+- Use interfaces to define boundaries between layers
+
+### 2. Single Responsibility Principle
+
+- Each module, class, or function should have one reason to change
+- Avoid "god objects" that try to do too much
+- Decompose complex functionality into smaller, focused units
+
+### 3. Dependency Inversion
+
+- High-level modules should not depend on low-level modules
+- Both should depend on abstractions
+- Use dependency injection for better testability and flexibility
+
+### 4. Frontend Architecture
+
+- Structure HTML semantically
+- Use modern CSS for styling and layout (Flexbox, Grid)
+- Organize JavaScript/TypeScript code into modules
+- Manage application state using simple patterns (e.g., state objects, event emitters) or a lightweight state management library if needed
+- Manipulate the DOM directly or use helper functions for UI updates
+
+### 5. Backend Architecture
+
+- Organize Rust code into modules by domain/functionality
+- Use traits for defining interfaces
+- Implement the repository pattern for data access
+- Follow Rust's ownership model for memory safety
+
+## Communication Patterns
+
+- Use Tauri commands for frontend-backend communication
+- Implement command handlers in Rust
+- Use asynchronous patterns for long-running operations
+- Provide progress updates for time-consuming operations
+
+## Error Handling
+
+- Use Result/Option types in Rust
+- Implement proper error types with context
+- Handle errors at appropriate levels
+- Provide user-friendly error messages
+- Log detailed error information for troubleshooting
+
+## Performance Considerations
+
+- Offload CPU-intensive operations to the Rust backend
+- Use streaming for large file operations
+- Implement pagination for displaying large lists
+- Use lazy loading and virtualization for UI performance
+- Apply caching strategies where appropriate
+
+## Security Principles
+
+- Validate all user input
+- Use safe APIs for file system access
+- Implement proper permission handling
+- Follow secure coding practices
+- Regular security audits and updates
+
+

@@ -1,0 +1,102 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# SoarZip Git Workflow Guidelines
+
+## Branch Strategy
+
+- `main` - Production-ready code
+- `develop` - Integration branch for features
+- `feature/*` - New features
+- `bugfix/*` - Bug fixes
+- `hotfix/*` - Urgent fixes for production
+- `release/*` - Release preparation
+
+## Commit Message Format
+
+Commit messages should follow this convention:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+### Type
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code changes that neither fix bugs nor add features
+- `perf`: Performance improvements
+- `test`: Adding or fixing tests
+- `chore`: Changes to build process or auxiliary tools
+
+### Scope
+
+The scope indicates what part of the codebase is affected:
+
+- `ui`: User interface components
+- `core`: Core functionality
+- `tauri`: Tauri backend
+- `archive`: Archive-related functionality
+- `settings`: Application settings
+- etc.
+
+### Subject
+
+- Short description (less than 70 characters)
+- Use imperative, present tense: "change" not "changed" or "changes"
+- No period at the end
+
+### Body
+
+- Optional detailed description
+- Use imperative, present tense
+- Include motivation for the change and contrast with previous behavior
+
+### Footer
+
+- Reference issues and pull requests
+- Note breaking changes
+
+### Examples
+
+```
+feat(archive): add support for 7z format
+
+Implement algorithm for 7z archive creation and extraction
+using the LZMA SDK for compression and decompression.
+
+Resolves #123
+```
+
+```
+fix(ui): correct file size display in archive list
+
+Previously showed incorrect sizes for files larger than 4GB
+due to 32-bit integer overflow. Now using BigInt for calculations.
+```
+
+## Pull Request Process
+
+1. Create feature/bugfix branch from develop
+2. Implement changes with appropriate tests
+3. Submit PR to develop
+4. Pass code review and automated tests
+5. Merge after approval
+
+## Code Review Checklist
+
+- Does the code follow our style guidelines?
+- Are the changes covered by tests?
+- Is the documentation updated?
+- Does it fulfill the requirements?
+- Are there any performance concerns?
+- Is there appropriate error handling?
+

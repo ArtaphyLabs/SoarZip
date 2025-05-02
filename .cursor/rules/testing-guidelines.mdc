@@ -1,0 +1,121 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# SoarZip Testing Guidelines
+
+## General Testing Principles
+
+- Write tests before or alongside code (TDD when possible)
+- Tests should be independent and self-contained
+- Test coverage should aim for at least 80% of the codebase
+- Mock external dependencies and services
+- Use descriptive test names that explain the test's purpose
+
+## Test Types
+
+### Unit Tests
+
+- Test individual functions and modules in isolation
+- Located in the same directory as the code being tested with `.test.ts` or `.test.js` extension
+- Should be fast and not depend on external resources
+- Use Jest (or a similar framework like Vitest) for frontend tests
+- Use Rust's built-in testing framework for backend tests
+
+### Integration Tests
+
+- Test interactions between multiple components or services
+- Verify that components work correctly together
+- Located in a `__tests__` directory at the appropriate level
+
+### End-to-End Tests
+
+- Test complete user flows and scenarios
+- Use Playwright for browser-based E2E tests
+- Located in a top-level `/e2e` directory
+
+## Test Structure
+
+Follow the Arrange-Act-Assert (AAA) pattern:
+
+```typescript
+test('should successfully extract files from a zip archive', () => {
+  // Arrange
+  const archivePath = '/path/to/sample.zip';
+  const destination = '/path/to/output';
+  const mockFiles = ['file1.txt', 'file2.txt'];
+  
+  // Mock dependencies
+  mockFileSystem.exists.mockResolvedValue(true);
+  mockExtractor.extract.mockResolvedValue(mockFiles);
+  
+  // Act
+  const result = await archiveService.extractFiles(archivePath, destination);
+  
+  // Assert
+  expect(result.success).toBe(true);
+  expect(result.extractedFiles).toEqual(mockFiles);
+  expect(mockExtractor.extract).toHaveBeenCalledWith(archivePath, destination);
+});
+```
+
+## Naming Conventions
+
+- Test files: `[filename].test.ts` or `[filename].spec.ts`
+- Test suites: `describe('moduleName', () => {})` or `describe('functionName', () => {})`
+- Test cases: `test('should do something when condition', () => {})` or `it('should do something when condition', () => {})`
+
+## Mock Guidelines
+
+- Mock external dependencies and services
+- Keep mocks as simple as possible
+- Avoid mocking the component/function under test
+- Use factories or fixtures for test data
+
+## UI Element Testing
+
+- Test DOM manipulation, event handling, and state updates in the UI
+- Select elements using standard DOM APIs (e.g., `document.querySelector`)
+- Simulate user events (e.g., clicks, input changes)
+- Assert changes in the DOM structure, element attributes, or application state
+- Example (using Jest and jsdom):
+
+```typescript
+// Assuming you have an HTML structure like:
+// <button id="extract-btn">Extract</button>
+// <div id="status"></div>
+
+test('should update status message after clicking extract button', async () => {
+  // Arrange
+  document.body.innerHTML = `
+    <button id="extract-btn">Extract</button>
+    <div id="status"></div>
+  `;
+  const extractButton = document.getElementById('extract-btn');
+  const statusDiv = document.getElementById('status');
+  
+  // Mock the backend call
+  const mockExtract = jest.fn().mockResolvedValue({ success: true });
+  // Assume setupEventListener attaches the click handler that calls mockExtract
+  setupEventListener(extractButton, statusDiv, mockExtract);
+
+  // Act
+  extractButton.click();
+  
+  // Wait for async operations if necessary (e.g., promises to resolve)
+  await Promise.resolve(); // Simple wait for microtask queue
+
+  // Assert
+  expect(mockExtract).toHaveBeenCalled();
+  expect(statusDiv.textContent).toContain('Extraction complete');
+});
+```
+
+## Test Documentation
+
+- Document complex test setups or scenarios
+- Use comments to explain non-obvious test logic
+- Document test data and mock behavior when complex
+
+

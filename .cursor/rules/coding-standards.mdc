@@ -1,0 +1,67 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# SoarZip Coding Standards
+
+## General Guidelines
+
+- Use Vanilla TypeScript for all frontend code and Rust for backend code
+- Ensure proper type safety across the codebase
+- Follow a functional programming approach when possible
+- Maintain clean code principles (SOLID, DRY, KISS)
+- Use meaningful variable and function names
+
+## JavaScript/TypeScript Standards
+
+- Use ES6+ features when appropriate
+- Prefer `const` over `let`, avoid `var`
+- Use arrow functions for callbacks
+- Use async/await for asynchronous operations
+- Use destructuring when accessing object properties
+- Use template literals for string interpolation
+- Avoid any `any` types in TypeScript whenever possible
+- Use proper TypeScript interfaces and types for all data structures
+- Use optional chaining (`?.`) and nullish coalescing (`??`) operators
+
+### File Naming
+
+- JavaScript/TypeScript files: camelCase (e.g., `archiveUtils.ts` or `archiveUtils.js`)
+- HTML files: kebab-case (e.g., `main-window.html`)
+- Test files: same name as the file being tested with `.test` or `.spec` suffix (e.g. `archiveUtils.test.ts`)
+- Style files: kebab-case or related to the HTML/JS module (e.g., `main-window.css`, `button.css`)
+
+### Code Structure
+
+- Organize code into logical modules
+- Use ES modules for code splitting and organization
+- Clearly separate DOM manipulation, application logic, and service calls
+- Use event listeners for handling user interactions
+- Define UI elements and their behavior logically
+
+## Rust Standards
+
+- Follow Rust idioms and best practices
+- Use the Rust 2021 edition
+- Use proper error handling with `Result` and `Option` types
+- Implement traits for better code organization
+- Use strong typing and avoid unsafe code when possible
+
+### File Organization
+
+- One module per file
+- Use snake_case for file names
+- Group related functionality in modules
+- Use Rust's module system for code organization
+
+## CSS/Styling Standards
+
+- Use plain CSS or a preprocessor like SASS/SCSS
+- Follow BEM naming convention when applicable
+- Use responsive design principles
+- Maintain consistent spacing and layout patterns
+- Use CSS variables for theming and consistent values
+
+
+
