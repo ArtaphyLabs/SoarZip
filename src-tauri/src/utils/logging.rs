@@ -13,6 +13,18 @@ macro_rules! log_info {
     };
 }
 
+/// Logs a warning message to the standard error stream, only in debug builds.
+/// 向标准错误流记录一条警告消息，仅在调试构建中。
+#[macro_export]
+macro_rules! log_warn {
+    ($($arg:tt)*) => {
+        #[cfg(debug_assertions)]
+        {
+            eprintln!("[SoarZip WARN] {}", format_args!($($arg)*));
+        }
+    };
+} 
+
 /// Logs an error message to the standard error stream, only in debug builds.
 /// 向标准错误流记录一条错误消息，仅在调试构建中。
 #[macro_export]
@@ -23,4 +35,4 @@ macro_rules! log_error {
             eprintln!("[SoarZip ERROR] {}", format_args!($($arg)*));
         }
     };
-}
+} 

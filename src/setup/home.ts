@@ -7,7 +7,7 @@
  * 为初始主屏幕上的交互元素配置事件监听器，
  * 例如"打开压缩包"和"新建压缩包"按钮。
  */
-import { showError } from '../ui/notification';
+import { showNewArchiveDialog } from '../ui/newArchiveDialog';
 
 /**
  * Interface defining the dependencies required by the home page setup function.
@@ -47,8 +47,7 @@ export function setupHomeActions(deps: HomeActionDependencies): void {
   
   newArchiveBtn?.addEventListener('click', () => {
     console.log("New archive button clicked"); // Log click
-    // Logic for creating a new archive (implement later)
-    showError('该功能正在开发中...');
+    showNewArchiveDialog();
   });
   console.log("Home actions setup complete."); // Log setup end
 } 

@@ -27,6 +27,8 @@ import {
 } from "./appState";
 import { navigationHistory } from "./navigationService";
 import { showError, showSuccess } from "../ui/notification";
+import { invoke } from "@tauri-apps/api/core";
+import { showNewArchiveDialog } from "../ui/newArchiveDialog";
 
 /**
  * Opens a file dialog for selecting an archive file and loads it upon selection.
@@ -89,5 +91,110 @@ export async function loadArchive(archivePath: string) {
     updateToolbarButtonsState(false);
   } finally {
     setIsLoading(false);
+  }
+} 
+
+/**
+ * Supported archive types with their display names and extensions.
+ * 支持的压缩包类型及其显示名称和扩展名。
+ */
+export const ARCHIVE_TYPES = [
+  { name: 'ZIP 压缩包', value: 'zip', extension: 'zip' },
+  { name: '7Z 压缩包', value: '7z', extension: '7z' },
+  { name: 'TAR 归档', value: 'tar', extension: 'tar' }
+];
+
+/**
+ * Opens a file dialog for selecting a path and name for a new archive file.
+ * 打开文件对话框以选择新压缩包文件的路径和名称。
+ * 
+ * @param defaultName - Default filename suggestion.
+ *                    - 默认文件名建议。
+ * @param archiveType - Type of archive to create.
+ *                    - 要创建的压缩包类型。
+ * @returns - Promise resolving to the selected file path, or null if the dialog was cancelled.
+ *          - Promise解析为所选文件的路径，如果对话框被取消则为null。
+ */
+export async function selectNewArchivePath(defaultName: string, archiveType: string): Promise<string | null> {
+  try {
+    return await invoke<string | null>('select_new_archive_path', { 
+      defaultName, 
+      archiveType 
+    });
+  } catch (error) {
+    console.error('Failed to open new archive path dialog:', error);
+    showError(`选择新压缩包路径失败: ${error}`);
+    return null;
+  }
+}
+
+/**
+ * Creates a new empty archive file and opens it.
+ * 创建一个新的空压缩包文件并打开它。
+ * 
+ * @param archiveType - Type of archive to create (e.g., 'zip', '7z').
+ *                    - 要创建的压缩包类型（例如，'zip'，'7z'）。
+ */
+export async function createNewArchive(archiveType: string) {
+  try {
+    setIsLoading(true);
+    
+    // Default name for the new archive
+    const defaultName = "新建压缩包";
+    
+    // Open dialog to let user select where to save the new archive
+    const archivePath = await selectNewArchivePath(defaultName, archiveType);
+    
+    if (!archivePath) {
+      console.log("New archive creation cancelled.");
+      return;
+    }
+    
+    console.log(`Creating new ${archiveType} archive at: ${archivePath}`);
+    
+    // Invoke the backend to create the empty archive
+    const createdPath = await invoke<string>('create_new_archive', {
+      archivePath,
+      archiveType
+    });
+    
+    console.log(`Successfully created new archive at: ${createdPath}`);
+    showSuccess(`成功创建新压缩包: ${getFileNameFromPath(createdPath)}`);
+    
+    // 确保在加载前显示文件浏览器UI
+    showFileBrowser();
+    
+    // Load the newly created archive
+    console.log(`Attempting to load newly created archive: ${createdPath}`);
+    await loadArchive(createdPath);
+    
+    // 再次确保UI正确显示（以防loadArchive内部未正确显示UI）
+    showFileBrowser();
+    refreshUI();
+    updateToolbarButtonsState(true);
+    
+    console.log(`Finished loading newly created archive: ${createdPath}`);
+    
+  } catch (error) {
+    console.error('Failed to create new archive:', error);
+    showError(`创建新压缩包失败: ${error}`);
+    resetAppState();
+    showHomePage();
+  } finally {
+    setIsLoading(false);
+  }
+}
+
+/**
+ * Shows a dialog to select archive type and creates a new archive.
+ * 显示一个对话框以选择压缩包类型并创建新的压缩包。
+ */
+export async function createNewArchiveDialog() {
+  try {
+    // Call the function to show the UI dialog
+    showNewArchiveDialog();
+  } catch (error) {
+    console.error('Failed to handle new archive dialog:', error);
+    showError(`创建新压缩包对话框失败: ${error}`);
   }
 } 

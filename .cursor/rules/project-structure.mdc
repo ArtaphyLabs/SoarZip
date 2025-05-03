@@ -9,26 +9,13 @@ SoarZip is a modern, cross-platform file archiving application built with Tauri 
 
 ## Directory Structure
 
-- `/src` - Frontend source code (React/TypeScript)
-  - `/components` - React components
-    - `/common` - Shared/reusable components
-    - `/layout` - Layout components (Header, Sidebar, etc.)
-    - `/archive` - Archive-related components
-    - `/settings` - Settings-related components
-  - `/pages` - Page components that represent different routes
-  - `/services` - Service classes for business logic
-    - `/archive` - Archive manipulation services
-    - `/filesystem` - File system interaction services
-    - `/settings` - Application settings services
-  - `/utils` - Utility functions
-  - `/types` - TypeScript type definitions
-  - `/constants` - Constant values
-  - `/assets` - Static assets (images, icons, etc.)
-  - `/styles` - CSS stylesheets
-    - `/base` - Base styles, resets
-    - `/components` - Component-specific styles
-    - `/layout` - Layout styles
-  - `/i18n` - Internationalization resources
+- `/src` - Frontend source code (TypeScript)
+  - `/services` - Service classes for core application logic (e.g., file operations, theme management, navigation). Includes key files like [fileService.ts](mdc:src/services/fileService.ts), [themeService.ts](mdc:src/services/themeService.ts), [navigationService.ts](mdc:src/services/navigationService.ts).
+  - `/setup` - Initialization scripts that configure different parts of the application on startup (e.g., window controls, toolbar, event listeners). Key file: [appSetup.ts](mdc:src/setup/appSetup.ts).
+  - `/styles` - CSS stylesheets organized by component or feature (e.g., base styles, layout, specific UI elements). Key file: [main.css](mdc:src/styles/main.css).
+  - `/ui` - Manages UI interactions and components (e.g., file explorer, dialogs, notifications). Key files: [uiManager.ts](mdc:src/ui/uiManager.ts), [fileExplorer.ts](mdc:src/ui/fileExplorer.ts).
+    - `/components` - Likely contains reusable UI component logic (Structure based on project conventions, needs verification if specific components are important).
+  - `/utils` - Utility functions used across the frontend. Key file: [index.ts](mdc:src/utils/index.ts).
 
 - `/src-tauri` - Tauri backend code (Rust)
   - `/src` - Rust source code
@@ -46,6 +33,8 @@ SoarZip is a modern, cross-platform file archiving application built with Tauri 
 - [tsconfig.json](mdc:tsconfig.json) - TypeScript configuration (if using TS)
 - [vite.config.ts](mdc:vite.config.ts) - Vite bundler configuration
 - [index.html](mdc:index.html) - HTML entry point
+- [src/main.ts](mdc:src/main.ts) - Main application entry point for the frontend.
+- [src/vite-env.d.ts](mdc:src/vite-env.d.ts) - Vite environment type definitions.
 - [src-tauri/Cargo.toml](mdc:src-tauri/Cargo.toml) - Rust dependencies for the Tauri backend
 
 

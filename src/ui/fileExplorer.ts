@@ -15,6 +15,15 @@ import { FileItem, getDisplayName, getFileIcon } from "../services/fileService";
 import { showInfo, showError } from "./notification";
 import { startExtractionProcess } from "../services/extractionService";
 import { navigateToFolder } from "../ui/uiManager";
+import {
+  handleCut,
+  handleCopy,
+  handlePaste,
+  handleDelete,
+  handleRename,
+  handleNewFolder
+} from "../setup/toolbar";
+import { refreshUI } from "../ui/uiManager";
 
 /**
  * Type definition for the file click handler.
@@ -134,6 +143,11 @@ function showFileContextMenu(event: MouseEvent, _file: FileItem): void { // _fil
         <li data-action="open-folder">打开</li>
         <li data-action="extract">提取到...</li>
         <hr>
+        <li data-action="cut">剪切</li>
+        <li data-action="copy">复制</li>
+        <li data-action="delete">删除</li>
+        <li data-action="rename">重命名</li>
+        <hr>
         <li data-action="copy-path">复制路径</li>
         <li data-action="properties">属性</li>
       `;
@@ -141,6 +155,11 @@ function showFileContextMenu(event: MouseEvent, _file: FileItem): void { // _fil
       // Single File
       menuList.innerHTML = `
         <li data-action="extract">提取到...</li>
+        <hr>
+        <li data-action="cut">剪切</li>
+        <li data-action="copy">复制</li>
+        <li data-action="delete">删除</li>
+        <li data-action="rename">重命名</li>
         <hr>
         <li data-action="copy-path">复制路径</li>
         <li data-action="properties">属性</li>
@@ -150,6 +169,10 @@ function showFileContextMenu(event: MouseEvent, _file: FileItem): void { // _fil
     // Multiple items selected
     menuList.innerHTML = `
       <li data-action="extract">提取 ${numSelected} 项到...</li>
+      <hr>
+      <li data-action="cut">剪切</li>
+      <li data-action="copy">复制</li>
+      <li data-action="delete">删除 ${numSelected} 项</li>
       <hr>
       <li data-action="copy-path">复制路径</li>
       <li data-action="properties">属性</li>
@@ -178,6 +201,23 @@ function showFileContextMenu(event: MouseEvent, _file: FileItem): void { // _fil
             case 'extract':
               // Trigger the extraction process using extractionService, passing selected paths
               await startExtractionProcess(selectedPaths);
+              break;
+            case 'cut':
+              handleCut();
+              break;
+            case 'copy':
+              handleCopy();
+              break;
+            case 'delete':
+              handleDelete(); // Assumes handleDelete uses getSelectedFiles internally
+              break;
+            case 'rename':
+              if (numSelected === 1) {
+                handleRename(); // Assumes handleRename uses getSelectedFiles internally
+              } else {
+                console.warn("Rename action called on multiple items.");
+                showInfo("只能重命名单个文件或文件夹。");
+              }
               break;
             case 'copy-path':
               // TODO: Implement copy path functionality
@@ -209,6 +249,74 @@ function showFileContextMenu(event: MouseEvent, _file: FileItem): void { // _fil
 
   // Add a global listener to close the menu when clicking outside
   setTimeout(() => document.addEventListener('click', removeContextMenu), 0);
+}
+
+/**
+ * Shows the custom context menu for the file list background.
+ * 显示文件列表背景的自定义上下文菜单。
+ *
+ * @param event - The contextmenu event.
+ *              - contextmenu 事件。
+ */
+function showBackgroundContextMenu(event: MouseEvent): void {
+  removeContextMenu(); // Remove any existing menu
+  event.preventDefault();
+  event.stopPropagation();
+
+  console.log(`Background context menu requested.`);
+
+  // Create Menu Structure
+  contextMenuElement = document.createElement('div');
+  contextMenuElement.id = 'custom-context-menu';
+  contextMenuElement.style.position = 'absolute';
+  contextMenuElement.style.left = `${event.clientX}px`;
+  contextMenuElement.style.top = `${event.clientY}px`;
+  contextMenuElement.style.zIndex = '1000';
+
+  const menuList = document.createElement('ul');
+
+  // Populate Menu Items
+  menuList.innerHTML = `
+    <li data-action="refresh">刷新</li>
+    <hr>
+    <li data-action="paste">粘贴</li>
+    <li data-action="new-folder">新建文件夹</li>
+  `;
+
+  // Add Event Listener for Menu Actions
+  menuList.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'LI' && target.dataset.action) {
+      const action = target.dataset.action;
+      console.log(`Background context menu action clicked: ${action}`);
+      removeContextMenu(); // Close menu after clicking an action
+
+      try {
+        switch (action) {
+          case 'refresh':
+            refreshUI();
+            break;
+          case 'paste':
+            handlePaste();
+            break;
+          case 'new-folder':
+            handleNewFolder();
+            break;
+          default:
+            console.warn(`Unhandled background context menu action: ${action}`);
+        }
+      } catch (err) {
+        console.error(`Error executing background context menu action '${action}':`, err);
+        showError(`执行操作失败: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+  });
+
+  // Append the menu to the body
+  document.body.appendChild(contextMenuElement);
+
+  // Add a one-time global click listener to remove the menu when clicking outside
+  document.addEventListener('click', removeContextMenu, { once: true });
 }
 
 /**
@@ -257,6 +365,15 @@ export function updateFileList(
   fileListBody.addEventListener('dblclick', handleFileListDblClick);
   fileListBody.addEventListener('contextmenu', handleFileListContextMenu);
 
+  // Also add context menu listener for the background
+  fileListBody.addEventListener('contextmenu', (event) => {
+    const target = event.target as HTMLElement;
+    // If the click was directly on the body (not a file item or its child element)
+    if (target.classList.contains('file-list-body')) {
+      showBackgroundContextMenu(event);
+    }
+  });
+
   const BATCH_SIZE = 100; // Number of items to render per batch
   const RENDER_DELAY = 10; // Delay in ms between batches
 
@@ -268,7 +385,7 @@ export function updateFileList(
   // Handle empty folder case
   if (files.length === 0) {
     console.log('No files to display, showing empty folder message');
-    fileListBody.innerHTML = '<div class="empty-folder">This folder is empty</div>';
+    fileListBody.innerHTML = '<div class="empty-folder">该目录下为空</div>';
     fileListBody.classList.remove('fade-out'); // Remove fade immediately
     return;
   }

@@ -7,8 +7,9 @@
  * 配置应用程序的主菜单栏，包括下拉菜单行为
  * 以及菜单项操作（如打开、新建、退出和关于）的事件处理程序。
  */
-import { showError } from '../ui/notification';
 import { showAboutDialog } from '../ui/aboutDialog.ts';
+import { showNewArchiveDialog } from '../ui/newArchiveDialog.ts';
+import { invoke } from "@tauri-apps/api/core";
 
 /**
  * Interface defining the dependencies required by the menu setup function.
@@ -77,10 +78,9 @@ export function setupMenuItems(deps: MenuDependencies): void {
       if (itemText === '打开') {
         await deps.openArchiveDialog(); // Use injected dependency
       } else if (itemText === '新建压缩') {
-        // Logic for creating a new archive (implement later)
-        showError('该功能正在开发中...'); // showError can be imported directly
+        showNewArchiveDialog();
       } else if (itemText === '退出') {
-        window.close(); // Directly use window API
+        await invoke('close_window');
       } else if (itemText === '关于') {
         showAboutDialog(); // Show about dialog
       }

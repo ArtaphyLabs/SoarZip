@@ -8,18 +8,19 @@
  * 状态管理以及与工具函数的交互。
  */
 
-// Declare the modules we created
-pub mod file_item;
-pub mod logging;
-pub mod archive_utils;
+// Declare the new module structure
 pub mod commands;
+pub mod models;
+pub mod services;
+pub mod utils;
 
 use std::sync::Mutex;
 use tauri_plugin_cli::CliExt;
 use tauri::Manager;
 
 // Re-export the commands to make them accessible for the handler
-use commands::*;
+// Use crate:: prefix for clarity
+use crate::commands::*;
 
 /// Holds the initial file path passed via command-line arguments.
 /// 保存通过命令行参数传递的初始文件路径。
@@ -100,9 +101,20 @@ pub fn run() {
             // Dialog commands
             select_archive_file,
             select_destination_folder,
+            select_new_archive_path,
+            select_files_to_add,
+            select_folders_to_add,
             // Archive commands
             open_archive,
             extract_files,
+            create_new_archive,
+            add_files_to_archive,
+            add_folders_to_archive,
+            delete_files_in_archive,
+            rename_file_in_archive,
+            move_files_in_archive,
+            paste_files_in_archive,
+            create_folder_in_archive,
             // New command
             get_initial_file_path
         ])
