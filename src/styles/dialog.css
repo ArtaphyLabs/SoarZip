@@ -21,13 +21,13 @@
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 10000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease-in-out, visibility 0s linear 0.2s, backdrop-filter 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out, backdrop-filter 0.2s ease-in-out;
 }
 
 /**
@@ -35,9 +35,10 @@
  * 可见覆盖层状态 - 显示对话框时应用
  */
 .dialog-overlay.visible {
+  display: flex !important;
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.2s ease-in-out, backdrop-filter 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out, visibility 0s linear 0s, backdrop-filter 0.2s ease-in-out;
 }
 
 /**
@@ -54,6 +55,7 @@
   color: var(--text-color);
   transform: scale(0.95);
   transition: transform 0.2s ease-in-out;
+  z-index: 10001;
 }
 
 /**

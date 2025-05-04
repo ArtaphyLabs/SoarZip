@@ -8,7 +8,7 @@
  * 配置事件监听器和状态管理。
  */
 import { showError, showInfo, showSuccess } from '../ui/notification';
-import { getSelectedFiles } from '../ui/fileExplorer';
+import { getSelectedFiles, getSelectedFileItems } from '../ui/fileExplorer';
 import { invoke } from '@tauri-apps/api/core';
 import { showConfirmDialog } from '../ui/confirmDialog';
 import { getCurrentArchivePath, getCurrentFiles, setCurrentFiles, setIsLoading } from '../services/appState';
@@ -328,19 +328,19 @@ export async function handleRename(): Promise<void> {
  * 处理单击"删除"工具栏按钮时的操作。
  */
 export function handleDelete(): void {
-  const filesToDelete = getSelectedFiles();
-  if (filesToDelete.length === 0) {
+  const filesToDeleteItems = getSelectedFileItems();
+  if (filesToDeleteItems.length === 0) {
     showInfo("请先选择要删除的文件或文件夹。");
     return;
   }
 
   let confirmMessage = "";
-  if (filesToDelete.length === 1) {
+  if (filesToDeleteItems.length === 1) {
     // Extract the base name for single selection
-    const baseName = filesToDelete[0].split('/').filter(Boolean).pop() || filesToDelete[0];
+    const baseName = filesToDeleteItems[0].name.split('/').filter(Boolean).pop() || filesToDeleteItems[0].name;
     confirmMessage = `确定要删除 "${baseName}" 吗？`;
   } else {
-    confirmMessage = `确定要删除选中的 ${filesToDelete.length} 个项目吗？`;
+    confirmMessage = `确定要删除选中的 ${filesToDeleteItems.length} 个项目吗？`;
   }
 
   showConfirmDialog(
@@ -348,10 +348,19 @@ export function handleDelete(): void {
     async () => {
       try {
         setIsLoading(true);
+        
+        // Prepare data for backend (send path and is_dir flag)
+        const itemsToDeletePayload = filesToDeleteItems.map(item => ({
+          path: item.name,
+          is_dir: item.is_dir
+        }));
+        
+        console.log("Calling delete_files_in_archive with payload:", itemsToDeletePayload);
+
         // Call backend to delete files
         await invoke('delete_files_in_archive', {
           archivePath: getCurrentArchivePath(),
-          files: filesToDelete
+          files: itemsToDeletePayload // Send the structured payload
         });
 
         // Refresh the file list
@@ -361,7 +370,7 @@ export function handleDelete(): void {
         setCurrentFiles(files);
         refreshUI();
         
-        showSuccess(`已成功删除 ${filesToDelete.length} 个项目`);
+        showSuccess(`已成功删除 ${filesToDeleteItems.length} 个项目`);
       } catch (error) {
         console.error("删除文件失败:", error);
         showError(`删除失败: ${error}`);

@@ -14,6 +14,7 @@ import "../styles/dialog.css";
 
 // Store dialog element reference
 let newArchiveDialog: HTMLElement | null = null;
+let newArchiveDialogOverlay: HTMLElement | null = null; // Separate ref for overlay
 
 /**
  * Creates and injects the new archive dialog HTML into the page.
@@ -21,10 +22,21 @@ let newArchiveDialog: HTMLElement | null = null;
  */
 function createNewArchiveDialogElement(): void {
   // Only create the dialog if it doesn't already exist
-  if (document.getElementById('new-archive-dialog')) {
-    return;
+  if (document.getElementById('new-archive-dialog-overlay')) {
+    console.warn("Dialog overlay already exists. Attempting to reuse.");
+    newArchiveDialogOverlay = document.getElementById('new-archive-dialog-overlay');
+    newArchiveDialog = newArchiveDialogOverlay?.querySelector('.new-archive-dialog') as HTMLElement | null;
+    if (!newArchiveDialog) {
+      console.error("Dialog overlay exists, but dialog content is missing!");
+      // Attempt to remove faulty overlay and recreate
+      newArchiveDialogOverlay?.remove();
+      newArchiveDialogOverlay = null; 
+    } else {
+      return; // Reuse existing elements
+    }
   }
 
+  console.log("Creating new archive dialog element...");
   const dialogHTML = `
     <div class="dialog-overlay" id="new-archive-dialog-overlay">
       <div class="dialog new-archive-dialog">
@@ -50,7 +62,14 @@ function createNewArchiveDialogElement(): void {
   document.body.insertAdjacentHTML('beforeend', dialogHTML);
   
   // Cache dialog overlay element reference
-  newArchiveDialog = document.getElementById('new-archive-dialog-overlay') as HTMLElement;
+  newArchiveDialogOverlay = document.getElementById('new-archive-dialog-overlay');
+  if (newArchiveDialogOverlay) {
+      newArchiveDialog = newArchiveDialogOverlay.querySelector('.new-archive-dialog') as HTMLElement | null;
+      console.log("Dialog elements created and cached.");
+  } else {
+      console.error("Failed to find dialog overlay after creation!");
+      return;
+  }
   
   // Set up the dialog event listeners
   setupNewArchiveDialogListeners();
@@ -200,14 +219,26 @@ async function handleCreateNewArchive(): Promise<void> {
  * 关闭新建压缩包对话框。
  */
 function closeNewArchiveDialog(): void {
-  if (newArchiveDialog) {
-    newArchiveDialog.classList.remove('visible');
+  console.log("Attempting to close new archive dialog...");
+  // Use the overlay reference for removal
+  if (newArchiveDialogOverlay) {
+    console.log("Removing visible class from overlay...");
+    newArchiveDialogOverlay.classList.remove('visible');
     
-    // Remove from DOM after animation completes
+    // Use a flag to prevent removal if it's being shown again quickly
+    (newArchiveDialogOverlay as any).__closing = true; 
+
     setTimeout(() => {
-      newArchiveDialog?.remove();
-      newArchiveDialog = null;
-    }, 200);
+      // Check the flag before removing
+      if ((newArchiveDialogOverlay as any)?.__closing) {
+          console.log("Removing dialog overlay from DOM.");
+          newArchiveDialogOverlay?.remove();
+          newArchiveDialogOverlay = null;
+          newArchiveDialog = null;
+      }
+    }, 300); // Increased delay slightly to match potential CSS transitions
+  } else {
+    console.warn("Close called but dialog overlay not found.");
   }
 }
 
@@ -216,13 +247,44 @@ function closeNewArchiveDialog(): void {
  * 显示新建压缩包对话框，如果对话框不存在则首先创建它。
  */
 export function showNewArchiveDialog(): void {
-  // Create dialog if it doesn't exist
-  if (!newArchiveDialog) {
+  console.log("showNewArchiveDialog called.");
+  // Create dialog if it doesn't exist or overlay was removed
+  if (!newArchiveDialogOverlay) {
+    console.log("Dialog overlay not found, creating...");
     createNewArchiveDialogElement();
+    // Re-cache references after creation
+    newArchiveDialogOverlay = document.getElementById('new-archive-dialog-overlay');
+    if (newArchiveDialogOverlay) {
+        newArchiveDialog = newArchiveDialogOverlay.querySelector('.new-archive-dialog');
+    }
   }
   
-  // Show the dialog with animation
-  setTimeout(() => {
-    newArchiveDialog?.classList.add('visible');
-  }, 10);
+  // Ensure dialog overlay element exists before proceeding
+  if (newArchiveDialogOverlay) {
+    // Reset closing flag if it was set
+    (newArchiveDialogOverlay as any).__closing = false; 
+
+    // Log styles *before* adding visible class
+    const overlayStyles = window.getComputedStyle(newArchiveDialogOverlay);
+    console.log(`Overlay styles BEFORE adding visible: display=${overlayStyles.display}, opacity=${overlayStyles.opacity}, visibility=${overlayStyles.visibility}`);
+
+    // Show the dialog with animation (use requestAnimationFrame for better timing)
+    requestAnimationFrame(() => {
+      if (newArchiveDialogOverlay) {
+        console.log("Adding 'visible' class to overlay...");
+        newArchiveDialogOverlay.classList.add('visible');
+        
+        // Log styles *after* adding visible class (allow time for styles to apply)
+        setTimeout(() => {
+            if (newArchiveDialogOverlay) {
+                const updatedOverlayStyles = window.getComputedStyle(newArchiveDialogOverlay);
+                console.log(`Overlay styles AFTER adding visible: display=${updatedOverlayStyles.display}, opacity=${updatedOverlayStyles.opacity}, visibility=${updatedOverlayStyles.visibility}`);
+            }
+        }, 50); // Short delay for style application
+      }
+    });
+  } else {
+    console.error("无法获取或创建新建压缩包对话框覆盖层元素");
+    showError("无法显示新建压缩包对话框。");
+  }
 } 

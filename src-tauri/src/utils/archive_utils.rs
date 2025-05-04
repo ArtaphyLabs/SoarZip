@@ -88,9 +88,10 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
     let mut processed_paths = HashSet::new();
 
     crate::log_info!("Parsing 7-Zip list output.");
-    if output_str.len() < 200 { 
-        crate::log_info!("7-Zip output preview: {}...", output_str.chars().take(100).collect::<String>());
+    if output_str.len() < 500 { 
+        crate::log_info!("7-Zip output (short): {}", output_str);
     } else {
+        crate::log_info!("7-Zip output preview (long): {}...", output_str.chars().take(300).collect::<String>());
         crate::log_info!("7-Zip output length: {}", output_str.len());
     }
 
@@ -99,6 +100,7 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
     let mut size: u64 = 0;
     let mut is_dir = false;
     let mut date = String::new();
+    let mut attributes = String::new();
 
     for line in output_str.lines() {
         let line = line.trim();
@@ -106,6 +108,9 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
         if line.starts_with("Path = ") {
             if let Some(mut item) = current_item.take() {
                 item.name = item.name.replace('\\', "/");
+                if item.is_dir && !item.name.ends_with('/') {
+                    item.name.push('/');
+                }
                 if !processed_paths.contains(&item.name) {
                     processed_paths.insert(item.name.clone());
                     files.push(item);
@@ -115,16 +120,21 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
             size = 0;
             is_dir = false;
             date = String::new();
+            attributes = String::new(); 
 
         } else if line.starts_with("Size = ") {
-            if let Ok(parsed_size) = line.trim_start_matches("Size = ").parse::<u64>() {
-                size = parsed_size;
-            }
+            size = line.trim_start_matches("Size = ").parse::<u64>().unwrap_or(0);
         } else if line.starts_with("Folder = ") {
             is_dir = line.trim_start_matches("Folder = ") == "+";
-            if is_dir && !path_str.ends_with('/') {
-                path_str.push('/');
+            if is_dir {
+                 if !path_str.ends_with('/') { path_str.push('/'); }
             }
+        } else if line.starts_with("Attributes = ") {
+             attributes = line.trim_start_matches("Attributes = ").to_string();
+             if attributes.starts_with('D') {
+                 is_dir = true;
+                 if !path_str.ends_with('/') { path_str.push('/'); }
+             }
         } else if line.starts_with("Modified = ") {
             date = line.trim_start_matches("Modified = ").to_string();
         } else if line.is_empty() && !path_str.is_empty() {
@@ -157,13 +167,26 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
                     "mp4" | "mkv" | "avi" | "mov" | "wmv" => "视频文件".to_string(),
                     "iso" => "镜像文件".to_string(),
                     _ => format!("{}文件", ext.to_uppercase()),
-                }
+                 }
             } else {
-                "文件".to_string()
+                if path_str.ends_with('/') || attributes.starts_with('D') {
+                    is_dir = true;
+                    "文件夹".to_string()
+                } else {
+                     "文件".to_string()
+                }
             };
 
+            let final_path = if is_dir && !path_str.ends_with('/') {
+                format!("{}/", path_str)
+            } else {
+                path_str.clone()
+            };
+
+            is_dir = final_path.ends_with('/') || attributes.starts_with('D');
+            
             let file_item = FileItem {
-                name: path_str.clone(),
+                name: final_path.clone(),
                 is_dir,
                 size,
                 modified_date: date.clone(),
@@ -171,81 +194,68 @@ pub fn parse_7z_list_output(output_str: &str) -> Vec<FileItem> {
             };
 
             current_item = Some(file_item);
-            path_str = String::new();
         }
     }
 
     if let Some(mut item) = current_item.take() {
         item.name = item.name.replace('\\', "/");
+         if item.is_dir && !item.name.ends_with('/') {
+             item.name.push('/');
+         }
         if !processed_paths.contains(&item.name) {
             processed_paths.insert(item.name.clone());
             files.push(item);
         }
     }
 
-    let mut additional_dirs = Vec::new();
-    let mut known_dir_paths: HashSet<String> = files.iter()
-        .filter(|f| f.is_dir)
-        .map(|f| f.name.clone())
-        .chain(processed_paths.iter().filter(|p| p.ends_with('/')).cloned())
-        .collect();
+    let mut final_files = Vec::new();
+    let mut final_paths = HashSet::new();
 
-    for file in &files {
-        if !file.is_dir { 
-            let path_obj = Path::new(&file.name);
-            let mut current_parent = path_obj.parent();
-            while let Some(parent) = current_parent {
-                if let Some(parent_str_os) = parent.to_str() {
-                    let parent_str = parent_str_os.replace('\\', "/");
-                    if !parent_str.is_empty() {
-                        let dir_path = format!("{}/", parent_str);
-                        if !known_dir_paths.contains(&dir_path) {
-                            known_dir_paths.insert(dir_path.clone());
-                            additional_dirs.push(FileItem {
-                                name: dir_path,
-                                is_dir: true,
-                                size: 0,
-                                modified_date: "".to_string(),
-                                type_name: "Folder".to_string(),
-                            });
-                        }
-                        current_parent = parent.parent();
-                    } else {
-                        break;
-                    }
-                } else {
-                     break;
-                }
-            }
+    for file in files {
+        if final_paths.insert(file.name.clone()) {
+            final_files.push(file);
         }
     }
 
-    files.extend(additional_dirs);
+    let mut parent_dirs_to_add = Vec::new();
+    let mut known_paths: HashSet<String> = final_paths.iter().cloned().collect();
 
-    files.retain(|file| {
-        let name = &file.name;
-        !name.is_empty() &&
-        !name.contains("[MESSAGES]") &&
-        !name.contains("Errors:") &&
-        !name.contains("Warnings:") &&
-        !name.starts_with("Scanning the drive for archives") &&
-        !name.starts_with("7-Zip") &&
-        !name.starts_with("Listing archive:") &&
-        !name.starts_with("----------") &&
-        !name.starts_with("Path = ") &&
-        !name.starts_with("Size = ") &&
-        !name.starts_with("Folder = ") &&
-        !name.starts_with("Modified = ")
-    });
+    for file in &final_files {
+        let path_obj = Path::new(&file.name);
+        let mut current_parent = path_obj.parent();
+        while let Some(parent) = current_parent {
+            if let Some(parent_str_os) = parent.to_str() {
+                let parent_str = parent_str_os.replace('\\', "/");
+                if !parent_str.is_empty() {
+                    let dir_path = format!("{}/", parent_str);
+                    if known_paths.insert(dir_path.clone()) { 
+                        parent_dirs_to_add.push(FileItem {
+                            name: dir_path,
+                            is_dir: true,
+                            size: 0,
+                            modified_date: "".to_string(),
+                            type_name: "文件夹".to_string(),
+                        });
+                    }
+                    current_parent = parent.parent();
+                } else {
+                    break;
+                }
+            } else {
+                 break;
+            }
+        }
+    }
+    final_files.extend(parent_dirs_to_add);
 
-    files.sort_by(|a, b| {
+    final_files.sort_by(|a, b| {
         match a.is_dir.cmp(&b.is_dir).reverse() {
             std::cmp::Ordering::Equal => a.name.cmp(&b.name),
             other => other,
         }
     });
 
-    crate::log_info!("Successfully parsed {} file items.", files.len());
+    crate::log_info!("Successfully parsed {} file items.", final_files.len());
 
-    files
+    final_files
 } 

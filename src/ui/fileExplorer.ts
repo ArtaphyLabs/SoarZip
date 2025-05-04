@@ -862,13 +862,24 @@ export function updatePathNavigation(
 }
 
 /**
- * Returns an array containing the full paths of the currently selected files/folders.
- * 返回包含当前选定文件/文件夹完整路径的数组。
+ * Gets the paths of the currently selected files and folders.
+ * 获取当前选中的文件和文件夹的路径。
  * 
  * @returns - An array of selected file/folder paths.
- *          - 一个包含选定文件/文件夹路径的数组。
+ *          - 选中的文件/文件夹路径数组。
  */
 export function getSelectedFiles(): string[] {
-  // Convert the Set of selected paths to an array
   return Array.from(selectedFiles);
+}
+
+/**
+ * Gets the FileItem objects of the currently selected files and folders.
+ * 获取当前选中的文件和文件夹的 FileItem 对象。
+ * 
+ * @returns - An array of selected FileItem objects.
+ *          - 选中的 FileItem 对象数组。
+ */
+export function getSelectedFileItems(): FileItem[] {
+  const selectedPaths = getSelectedFiles();
+  return currentRenderedFiles.filter(item => selectedPaths.includes(item.name));
 } 

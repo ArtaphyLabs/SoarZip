@@ -5,10 +5,19 @@
 use tauri::{Window, AppHandle}; // Add AppHandle for commands needing it
 use rfd::FileDialog;
 use std::path::Path;
+use serde::{Deserialize, Serialize}; // Add serde import
 
 // Update import paths
 use crate::models::file_item::FileItem;
 use crate::utils::archive_utils::{resolve_7z_path, run_7z_command, decode_7z_output, parse_7z_list_output};
+
+// --- Define Payload Struct --- 
+#[derive(Deserialize, Debug)] // Add Debug derive
+pub struct DeleteItemPayload {
+    path: String,
+    is_dir: bool,
+}
+// --- End Payload Struct --- 
 
 // --- Window Commands --- 
 
@@ -37,19 +46,21 @@ pub fn minimize_window(window: Window) {
 pub fn maximize_window(window: Window) {
     match window.is_maximized() {
         Ok(true) => {
-            // If maximized, unmaximize (restore)
-            if let Err(_e) = window.unmaximize() {
-                crate::log_error!("Failed to restore window: {}", _e);
+            // 如果已经是最大化状态，则还原
+            crate::log_info!("Window is maximized, restoring to normal state");
+            if let Err(e) = window.unmaximize() {
+                crate::log_error!("Failed to restore window: {}", e);
             }
         }
         Ok(false) => {
-             // If not maximized, maximize
-            if let Err(_e) = window.maximize() {
-                crate::log_error!("Failed to maximize window: {}", _e);
+            // 如果不是最大化状态，则最大化
+            crate::log_info!("Window is not maximized, maximizing");
+            if let Err(e) = window.maximize() {
+                crate::log_error!("Failed to maximize window: {}", e);
             }
         }
-        Err(_e) => {
-            crate::log_error!("Failed to get window state: {}", _e)
+        Err(e) => {
+            crate::log_error!("Failed to get window state: {}", e)
         },
     }
 }
@@ -676,15 +687,15 @@ pub fn add_files_to_archive(
 pub fn delete_files_in_archive(
     app_handle: AppHandle,
     archive_path: String,
-    files: Vec<String>
+    files: Vec<DeleteItemPayload>
 ) -> Result<(), String> {
     if files.is_empty() {
         return Ok(());
     }
 
     crate::log_info!(
-        "Deleting {} files/folders from archive: {}",
-        files.len(), archive_path
+        "Deleting {} items from archive: {}. Items: {:?}",
+        files.len(), archive_path, files 
     );
 
     // Check if archive exists
@@ -699,17 +710,28 @@ pub fn delete_files_in_archive(
     crate::log_info!("Using bundled 7-Zip at: {:?}", seven_zip_path);
 
     // Build 7-Zip command arguments for deleting files
-    // 7z d <archive_path> <file1> <file2> ... -y
     let mut args = vec![
         "d".to_string(),           // Delete command
         archive_path.clone(),     // Archive path
         "-y".to_string(),         // Auto-yes to all queries
     ];
 
-    // Add all file paths to arguments
-    for file_path in files.iter() {
-        args.push(file_path.clone());
+    // Add all file paths to arguments, appending '/' for directories
+    for item in files.iter() {
+        let path_to_delete = if item.is_dir {
+            // Append wildcard or just slash? Let's try slash first for deleting the dir itself.
+            // If this fails to delete contents, we might need path/*
+            let mut dir_path = item.path.trim_end_matches('/').to_string();
+            dir_path.push('/');
+            crate::log_info!("Appending / for directory delete: {}", dir_path);
+            dir_path
+        } else {
+            item.path.clone()
+        };
+        args.push(path_to_delete);
     }
+
+    crate::log_info!("Executing delete command with args: {:?}", args);
 
     // Execute the 7-Zip command
     let output = run_7z_command(&seven_zip_path, &args)?;
@@ -718,7 +740,7 @@ pub fn delete_files_in_archive(
     if !output.status.success() {
         let stderr_output = decode_7z_output(&output.stderr);
         let error_msg = format!(
-            "Failed to delete files from archive. Exit code: {}. Error: {}",
+            "Failed to delete items from archive. Exit code: {}. Error: {}",
             output.status.code().unwrap_or(-1),
             stderr_output.trim()
         );
@@ -726,7 +748,7 @@ pub fn delete_files_in_archive(
         return Err(error_msg);
     }
 
-    crate::log_info!("Successfully deleted files from archive: {}", archive_path);
+    crate::log_info!("Successfully deleted items from archive: {}", archive_path);
     Ok(())
 }
 
@@ -759,138 +781,95 @@ pub fn create_folder_in_archive(
         folder_path, archive_path
     );
 
-    // Ensure folder path is not empty, doesn't contain invalid chars, and ends with a slash for clarity
+    // 验证文件夹路径
     let clean_folder_path = folder_path.trim().trim_matches(|c| c == '/' || c == '\\');
     if clean_folder_path.is_empty() || clean_folder_path.contains("..") {
         let error_msg = format!("Invalid folder path provided: {}", folder_path);
         crate::log_error!("{}", error_msg);
         return Err(error_msg);
     }
-    let folder_path_with_slash = format!("{}/", clean_folder_path); // Ensure trailing slash
+    
+    // 确保路径以斜杠结尾
+    let target_folder_path = format!("{}/", clean_folder_path);
 
-    // Check if archive exists
+    // 检查压缩包是否存在
     if !Path::new(&archive_path).exists() {
         let error_msg = format!("Archive file not found: {}", archive_path);
         crate::log_error!("{}", error_msg);
         return Err(error_msg);
     }
 
-    // Resolve 7-Zip path
+    // 解决7-Zip路径
     let seven_zip_path = resolve_7z_path(&app_handle)?;
     crate::log_info!("Using bundled 7-Zip at: {:?}", seven_zip_path);
 
-    // 方法1：直接使用空内容创建文件夹
-    // 创建一个空的内存文件
-    let empty_content = "";
+    // --- 使用本地临时文件夹方法 ---
     
-    // 构建命令以直接添加文件夹
-    let add_dir_args = vec![
-        "a".to_string(),                       // Add command
-        archive_path.clone(),                 // Archive path
-        "-tzip".to_string(),                  // 使用ZIP格式
-        "-si".to_string(),                    // 从标准输入读取
-        format!("-w."),                       // 工作目录
-        folder_path_with_slash.clone(),       // 文件夹路径（含斜杠）
-        "-y".to_string(),                     // 自动回答是
-    ];
-
-    crate::log_info!("Creating directory using direct method: {:?}", add_dir_args);
+    // 1. 创建一个临时目录
+    let temp_base_dir = std::env::temp_dir().join(format!("soarzip_folder_{}", 
+        std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default().as_millis()));
     
-    // 使用Command自定义标准输入
-    let mut child = std::process::Command::new(&seven_zip_path)
-        .args(&add_dir_args)
-        .stdin(std::process::Stdio::piped())
-        .stdout(std::process::Stdio::piped())
-        .stderr(std::process::Stdio::piped())
-        .spawn()
-        .map_err(|e| format!("Failed to spawn 7z process: {}", e))?;
-    
-    // 写入空内容到标准输入
-    if let Some(mut stdin) = child.stdin.take() {
-        use std::io::Write;
-        if let Err(e) = stdin.write_all(empty_content.as_bytes()) {
-            crate::log_error!("Failed to write to stdin: {}", e);
-            // 继续尝试其他方法
+    // 确保临时目录不存在，如果存在则删除
+    if temp_base_dir.exists() {
+        if let Err(e) = std::fs::remove_dir_all(&temp_base_dir) {
+            let error_msg = format!("Failed to clean up existing temp directory: {}", e);
+            crate::log_error!("{}", error_msg);
+            return Err(error_msg);
         }
     }
     
-    // 等待进程完成
-    let output = child.wait_with_output()
-        .map_err(|e| format!("Failed to wait for 7z process: {}", e))?;
-    
-    if output.status.success() {
-        crate::log_info!("Successfully created folder '{}' in archive: {}", folder_path_with_slash, archive_path);
-        return Ok(());
-    }
-    
-    // 如果第一种方法失败，使用第二种备用方法
-    crate::log_info!("First method failed, trying alternative method with placeholder file...");
-    
-    // Create a unique temporary file name
-    let placeholder_name = ".soarzip_placeholder";
-    let placeholder_path_in_archive = format!("{}{}", folder_path_with_slash, placeholder_name);
-
-    // Create an empty temporary file locally
-    let temp_dir = std::env::temp_dir();
-    let local_placeholder_path = temp_dir.join(placeholder_name);
-    if let Err(e) = std::fs::write(&local_placeholder_path, b"") {
-        let error_msg = format!("Failed to create temporary placeholder file: {}", e);
+    // 创建临时基础目录
+    if let Err(e) = std::fs::create_dir_all(&temp_base_dir) {
+        let error_msg = format!("Failed to create temp directory: {}", e);
         crate::log_error!("{}", error_msg);
         return Err(error_msg);
     }
-
-    // Build 7-Zip command arguments to add the placeholder file with its full path
-    let add_args = vec![
-        "a".to_string(),                       // Add command
-        archive_path.clone(),                 // Archive path
-        local_placeholder_path.to_string_lossy().to_string(), // Local file to add
-        format!("-w{}", temp_dir.to_string_lossy()), // 工作目录
-        format!("-i!{}", placeholder_name),   // 只包含此文件
-        format!("-sa={}", placeholder_path_in_archive), // 在归档中指定名称
-        "-y".to_string(),                     // Auto-yes to all queries
+    
+    // 2. 在临时目录中创建目标文件夹结构
+    let temp_folder_path = temp_base_dir.join(clean_folder_path);
+    crate::log_info!("Creating local folder structure at: {:?}", temp_folder_path);
+    
+    if let Err(e) = std::fs::create_dir_all(&temp_folder_path) {
+        let error_msg = format!("Failed to create folder structure in temp directory: {}", e);
+        crate::log_error!("{}", error_msg);
+        // 尝试清理临时目录
+        let _ = std::fs::remove_dir_all(&temp_base_dir);
+        return Err(error_msg);
+    }
+    
+    // 3. 使用7z将临时目录中的文件夹添加到压缩包
+    let args = vec![
+        "a".to_string(),              // 添加命令
+        archive_path.clone(),         // 压缩包路径
+        format!("{}\\.", temp_base_dir.to_string_lossy()), // 添加整个临时目录
+        "-r".to_string(),             // 递归添加
+        "-y".to_string(),             // 自动回答是
     ];
-
-    // Execute the 7-Zip command to add the placeholder
-    crate::log_info!("Adding placeholder: {:?}", add_args);
-    let output = run_7z_command(&seven_zip_path, &add_args)?;
-
-    // Clean up the local temporary file
-    let _ = std::fs::remove_file(&local_placeholder_path);
-
+    
+    crate::log_info!("Adding folder from temp directory with command: {:?}", args);
+    
+    // 执行7z命令
+    let output = run_7z_command(&seven_zip_path, &args)?;
+    
+    // 4. 清理临时目录
+    if let Err(e) = std::fs::remove_dir_all(&temp_base_dir) {
+        crate::log_warn!("Warning: Failed to clean up temp directory: {}", e);
+        // 继续执行，这不是致命错误
+    }
+    
+    // 检查命令执行结果
     if !output.status.success() {
         let stderr_output = decode_7z_output(&output.stderr);
         let error_msg = format!(
-            "Failed to add placeholder file '{}' to archive. Exit code: {}. Error: {}",
-            placeholder_path_in_archive, output.status.code().unwrap_or(-1), stderr_output.trim()
+            "Failed to create folder in archive. Exit code: {}. Error: {}",
+            output.status.code().unwrap_or(-1), stderr_output.trim()
         );
         crate::log_error!("{}", error_msg);
         return Err(error_msg);
     }
-    crate::log_info!("Placeholder added successfully.");
-
-    // Now delete the placeholder file from the archive
-    let delete_args = vec![
-        "d".to_string(),                    // Delete command
-        archive_path.clone(),               // Archive path
-        placeholder_path_in_archive.clone(), // Placeholder file path in archive to delete
-        "-y".to_string(),                   // Auto-yes to all queries
-    ];
-
-    crate::log_info!("Deleting placeholder: {:?}", delete_args);
-    let output = run_7z_command(&seven_zip_path, &delete_args)?;
-
-    if !output.status.success() {
-        let stderr_output = decode_7z_output(&output.stderr);
-        // Log a warning, but don't fail the whole operation if only placeholder deletion failed
-        crate::log_warn!(
-            "Warning: Successfully created folder '{}', but failed to remove placeholder file '{}' from archive. Exit code: {}. Error: {}",
-            folder_path_with_slash, placeholder_path_in_archive, output.status.code().unwrap_or(-1), stderr_output.trim()
-        );
-    } else {
-        crate::log_info!("Placeholder deleted successfully.");
-    }
-
-    crate::log_info!("Successfully processed folder creation for '{}' in archive: {}", folder_path_with_slash, archive_path);
+    
+    crate::log_info!("Successfully created folder '{}' in archive: {}", target_folder_path, archive_path);
     Ok(())
 }
 

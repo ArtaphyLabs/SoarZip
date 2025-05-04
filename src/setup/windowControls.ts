@@ -27,6 +27,13 @@ export function setupWindowControls(): void {
     return;
   }
 
+  // --- Add check to prevent multiple listener attachments --- 
+  if ((maximizeBtn as any).__hasClickListener) {
+    console.warn("Maximize button listener already attached. Skipping.");
+    return; 
+  }
+  // --- End of check --- 
+
   minimizeBtn.addEventListener('click', () => {
     console.log("Minimize button clicked"); // Log click
     minimizeWindow();
@@ -35,6 +42,9 @@ export function setupWindowControls(): void {
     console.log("Maximize button clicked"); // Log click
     maximizeWindow();
   });
+  // Mark the button to indicate listener has been attached
+  (maximizeBtn as any).__hasClickListener = true;
+
   closeBtn.addEventListener('click', () => {
     console.log("Close button clicked"); // Log click
     closeWindow();
